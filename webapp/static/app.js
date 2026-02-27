@@ -345,41 +345,27 @@ async function applyFixedTemplate() {
     showTemplateStatus("Enter at least one amount in template.", true);
     return;
   }
-
-  const existingFixedCats = new Set(
-    state.entries.filter((x) => x.expense_type === "Fixed Expense").map((x) => x.category)
-  );
-
-  const items = cats
-    .filter((cat) => !existingFixedCats.has(cat))
-    .map((cat) => ({
-      room: state.room,
-      date: `${state.month}-01`,
-      expense_type: "Fixed Expense",
-      category: cat,
-      amount: template[cat],
-      payment_method: "",
-      note: "Monthly fixed template",
-    }));
-
-  if (!items.length) {
-    showTemplateStatus("All fixed categories already exist for this month.");
-    return;
-  }
-
-  const res = await fetch("/api/expenses/bulk", {
+  const res = await fetch("/api/template/sync", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ items }),
+    body: JSON.stringify({
+      room: state.room,
+      month: state.month,
+      template,
+    }),
   });
 
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    showTemplateStatus(err.error || "Bulk insert failed.", true);
+    showTemplateStatus(data.error || "Template sync failed.", true);
     return;
   }
 
-  showTemplateStatus(`Added ${items.length} fixed records.`);
+  showTemplateStatus(
+    `Synced ${data.categories_synced || 0} categories (added ${data.inserted || 0}, updated ${
+      data.updated || 0
+    }, removed duplicates ${data.removed_duplicates || 0}).`
+  );
   await refreshAll();
 }
 

@@ -437,6 +437,79 @@ def analyze_spend_forecast(room: str, month: str) -> dict:
     }
 
 
+def sync_fixed_template(room: str, month: str, template: dict) -> dict:
+    if not room:
+        room = "home"
+    start, end = month_bounds(month)
+    normalized = {}
+    for cat, raw in template.items():
+        if cat not in FIXED_CATEGORIES:
+            continue
+        amt = parse_amount(raw)
+        if amt > 0:
+            normalized[cat] = amt
+
+    inserted = 0
+    updated = 0
+    removed_duplicates = 0
+
+    with connect_db() as conn:
+        for cat, amount in normalized.items():
+            cur = conn.execute(
+                adapt_sql(
+                    """
+                    SELECT id
+                    FROM expenses
+                    WHERE room = ? AND date >= ? AND date < ?
+                      AND expense_type = 'Fixed Expense' AND category = ?
+                    ORDER BY id ASC
+                    """
+                ),
+                (room, start, end, cat),
+            )
+            rows = cur.fetchall()
+            ids = []
+            for row in rows:
+                if isinstance(row, dict):
+                    ids.append(int(row["id"]))
+                else:
+                    ids.append(int(row["id"]))
+
+            if not ids:
+                insert_sql = (
+                    """
+                    INSERT INTO expenses (room, date, expense_type, category, amount, payment_method, note)
+                    VALUES (?, ?, 'Fixed Expense', ?, ?, '', 'Monthly fixed template')
+                    """
+                )
+                if USE_POSTGRES:
+                    insert_sql += " RETURNING id"
+                conn.execute(adapt_sql(insert_sql), (room, f"{month}-01", cat, amount))
+                inserted += 1
+                continue
+
+            keep_id = ids[0]
+            conn.execute(
+                adapt_sql("UPDATE expenses SET amount = ?, note = 'Monthly fixed template' WHERE id = ? AND room = ?"),
+                (amount, keep_id, room),
+            )
+            updated += 1
+
+            for dup_id in ids[1:]:
+                conn.execute(adapt_sql("DELETE FROM expenses WHERE id = ? AND room = ?"), (dup_id, room))
+                removed_duplicates += 1
+
+        if not USE_POSTGRES:
+            conn.commit()
+
+    return {
+        "inserted": inserted,
+        "updated": updated,
+        "removed_duplicates": removed_duplicates,
+        "categories_synced": len(normalized),
+    }
+
+
 class SpendHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -454,6 +527,9 @@ class SpendHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/expenses/bulk":
             self.create_bulk_expenses()
+            return
+        if parsed.path == "/api/template/sync":
+            self.apply_template_sync()
             return
         if parsed.path == "/api/ai-summary":
             self.generate_ai_summary()
@@ -502,6 +578,32 @@ class SpendHandler(BaseHTTPRequestHandler):
                 return
 
         json_response(self, HTTPStatus.CREATED, {"ok": True, "ids": inserted})
+
+    def apply_template_sync(self) -> None:
+        length = int(self.headers.get("Content-Length", "0"))
+        body = self.rfile.read(length)
+        try:
+            payload = json.loads(body)
+        except json.JSONDecodeError:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": "Invalid JSON"})
+            return
+
+        room = (payload.get("room") or "home").strip()[:50]
+        month = (payload.get("month") or "").strip()
+        template = payload.get("template") or {}
+        if not month:
+            month = dt.date.today().strftime("%Y-%m")
+        if not isinstance(template, dict):
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": "template must be an object"})
+            return
+
+        try:
+            result = sync_fixed_template(room=room, month=month, template=template)
+        except ValueError as err:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(err)})
+            return
+
+        json_response(self, HTTPStatus.OK, {"ok": True, **result, "room": room, "month": month})
 
     def generate_ai_summary(self) -> None:
         length = int(self.headers.get("Content-Length", "0"))
