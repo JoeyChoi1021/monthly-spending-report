@@ -120,6 +120,13 @@ function showForecastStatus(msg, isError = false) {
   els.forecastStatus.style.color = isError ? "#b83244" : "#627087";
 }
 
+function formatAddedAt(ts) {
+  if (!ts) return "";
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return String(ts);
+  return d.toLocaleString();
+}
+
 function buildApiUrl(path) {
   const out = new URL(path, window.location.origin);
   out.searchParams.set("room", state.room);
@@ -159,7 +166,7 @@ async function loadEntries() {
   els.entriesBody.innerHTML = "";
   if (data.items.length === 0) {
     const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="7">No records yet for ${state.month}.</td>`;
+    row.innerHTML = `<td colspan="8">No records yet for ${state.month}.</td>`;
     els.entriesBody.appendChild(row);
     return;
   }
@@ -173,6 +180,7 @@ async function loadEntries() {
       <td>${moneyFmt.format(item.amount)}</td>
       <td>${item.payment_method || ""}</td>
       <td>${item.note || ""}</td>
+      <td>${formatAddedAt(item.created_at)}</td>
       <td><button class="delete-btn" data-id="${item.id}" type="button">Delete</button></td>
     `;
     els.entriesBody.appendChild(tr);
