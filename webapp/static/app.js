@@ -33,6 +33,7 @@ const els = {
   paymentMethodInput: document.getElementById("paymentMethodInput"),
   noteInput: document.getElementById("noteInput"),
   expenseForm: document.getElementById("expenseForm"),
+  undoLastBtn: document.getElementById("undoLastBtn"),
   formStatus: document.getElementById("formStatus"),
   entriesBody: document.getElementById("entriesBody"),
   fixedTotal: document.getElementById("fixedTotal"),
@@ -57,6 +58,7 @@ let state = {
   room: (url.searchParams.get("room") || "home").trim(),
   month: url.searchParams.get("month") || new Date().toISOString().slice(0, 7),
   entries: [],
+  lastAddedExpenseId: null,
 };
 
 const moneyFmt = new Intl.NumberFormat("en-US", {
@@ -97,6 +99,10 @@ function setCategories() {
 function showStatus(msg, isError = false) {
   els.formStatus.textContent = msg;
   els.formStatus.style.color = isError ? "#b83244" : "#627087";
+}
+
+function setUndoState() {
+  els.undoLastBtn.disabled = !state.lastAddedExpenseId;
 }
 
 function showTemplateStatus(msg, isError = false) {
@@ -184,6 +190,10 @@ async function loadEntries() {
       if (!resp.ok) {
         showStatus("Delete failed.", true);
         return;
+      }
+      if (String(state.lastAddedExpenseId) === String(id)) {
+        state.lastAddedExpenseId = null;
+        setUndoState();
       }
       showStatus("Deleted.");
       await refreshAll();
@@ -291,10 +301,32 @@ async function onSubmit(event) {
     showStatus(err.error || "Failed to save", true);
     return;
   }
+  const data = await res.json();
+  state.lastAddedExpenseId = data.id || null;
+  setUndoState();
 
   els.amountInput.value = "";
   els.noteInput.value = "";
-  showStatus("Saved.");
+  showStatus("Saved. You can undo this add.");
+  await refreshAll();
+}
+
+async function undoLastAdd() {
+  if (!state.lastAddedExpenseId) {
+    showStatus("No recent add to undo.");
+    return;
+  }
+  const id = state.lastAddedExpenseId;
+  const delUrl = new URL(`/api/expenses/${id}`, window.location.origin);
+  delUrl.searchParams.set("room", state.room);
+  const resp = await fetch(delUrl, { method: "DELETE" });
+  if (!resp.ok) {
+    showStatus("Undo failed.", true);
+    return;
+  }
+  state.lastAddedExpenseId = null;
+  setUndoState();
+  showStatus("Last add reverted.");
   await refreshAll();
 }
 
@@ -399,6 +431,7 @@ function init() {
   els.roomInput.value = state.room;
   els.monthInput.value = state.month;
   els.dateInput.value = `${state.month}-01`;
+  setUndoState();
 
   setCategories();
   renderFixedTemplateInputs();
@@ -409,6 +442,8 @@ function init() {
 
   els.saveRoomBtn.addEventListener("click", async () => {
     state.room = (els.roomInput.value.trim() || "home").slice(0, 50);
+    state.lastAddedExpenseId = null;
+    setUndoState();
     applyRoomAndMonthToUrl();
     renderFixedTemplateInputs();
     await refreshAll();
@@ -416,14 +451,20 @@ function init() {
 
   els.monthInput.addEventListener("change", async () => {
     if (!els.monthInput.value) return;
+    state.lastAddedExpenseId = null;
+    setUndoState();
     await updateMonth(els.monthInput.value);
   });
 
   els.prevMonthBtn.addEventListener("click", async () => {
+    state.lastAddedExpenseId = null;
+    setUndoState();
     await updateMonth(shiftMonth(state.month, -1));
   });
 
   els.nextMonthBtn.addEventListener("click", async () => {
+    state.lastAddedExpenseId = null;
+    setUndoState();
     await updateMonth(shiftMonth(state.month, 1));
   });
 
@@ -437,6 +478,7 @@ function init() {
   els.applyTemplateBtn.addEventListener("click", applyFixedTemplate);
   els.aiSummaryBtn.addEventListener("click", generateAISummary);
   els.forecastBtn.addEventListener("click", runForecast);
+  els.undoLastBtn.addEventListener("click", undoLastAdd);
 
   setInterval(refreshAll, 3000);
 }
