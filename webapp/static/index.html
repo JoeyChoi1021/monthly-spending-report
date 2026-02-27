@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shared Spend Tracker</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1>Shared Spend Tracker</h1>
+        <div class="top-controls">
+          <label>
+            Shared Room
+            <input id="roomInput" type="text" maxlength="50" />
+          </label>
+          <button id="saveRoomBtn" type="button">Apply Room</button>
+          <button id="prevMonthBtn" type="button">Prev Month</button>
+          <label>
+            Month
+            <input id="monthInput" type="month" />
+          </label>
+          <button id="nextMonthBtn" type="button">Next Month</button>
+          <button id="exportCsvBtn" type="button">Export CSV</button>
+        </div>
+      </header>
+
+      <section class="grid">
+        <article class="panel">
+          <h2>Add Expense</h2>
+          <form id="expenseForm">
+            <div class="form-row">
+              <label>
+                Date
+                <input id="dateInput" name="date" type="date" required />
+              </label>
+              <label>
+                Amount
+                <input id="amountInput" name="amount" type="number" min="0" step="0.01" required />
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Expense Type
+                <select id="typeInput" name="expense_type" required>
+                  <option value="Fixed Expense">Fixed Expense</option>
+                  <option value="Non-Fixed Expense">Non-Fixed Expense</option>
+                </select>
+              </label>
+              <label>
+                Category
+                <select id="categoryInput" name="category" required></select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Payment Method
+                <input id="paymentMethodInput" name="payment_method" type="text" placeholder="Card / Cash / Bank" />
+              </label>
+              <label>
+                Note
+                <input id="noteInput" name="note" type="text" maxlength="300" />
+              </label>
+            </div>
+
+            <button type="submit">Add Record</button>
+          </form>
+          <p id="formStatus" class="status"></p>
+        </article>
+
+        <article class="panel">
+          <h2>Monthly Summary</h2>
+          <div class="totals">
+            <div><span>Fixed Expense</span><strong id="fixedTotal">$0.00</strong></div>
+            <div><span>Non-Fixed Expense</span><strong id="nonFixedTotal">$0.00</strong></div>
+            <div><span>Total</span><strong id="grandTotal">$0.00</strong></div>
+          </div>
+          <h3>Spend by Category</h3>
+          <div id="barChart" class="bar-chart"></div>
+          <h3>AI Summary</h3>
+          <button id="aiSummaryBtn" type="button">Generate AI Summary</button>
+          <p id="aiStatus" class="status"></p>
+          <p id="aiSummaryText" class="ai-summary"></p>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>Fixed Expense Template (Monthly)</h2>
+        <p class="status">Enter your regular monthly fixed amounts once, then click apply every month.</p>
+        <div id="fixedTemplateGrid" class="fixed-grid"></div>
+        <div class="template-actions">
+          <button id="saveTemplateBtn" type="button">Save Template</button>
+          <button id="applyTemplateBtn" type="button">Apply Template To Current Month</button>
+        </div>
+        <p id="templateStatus" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Forecast And Pattern Analysis</h2>
+        <button id="forecastBtn" type="button">Run Forecast</button>
+        <p id="forecastStatus" class="status"></p>
+        <div id="forecastCards" class="forecast-cards"></div>
+        <h3>Predicted Category Spend (Next Month)</h3>
+        <div id="forecastCategories" class="bar-chart"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Entries</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Note</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="entriesBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>

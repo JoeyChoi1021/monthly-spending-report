@@ -1,0 +1,19 @@
+date,description,amount,category,type
+2026-01-01,Salary,4500,Income,income
+2026-01-03,Rent,-1600,Housing,expense
+2026-01-05,Groceries,-120,Food,expense
+2026-01-07,Coffee,-8,Food,expense
+2026-01-10,Internet,-60,Utilities,expense
+2026-01-12,Gas,-55,Transport,expense
+2026-01-15,Restaurant,-42,Food,expense
+2026-01-20,Streaming,-15,Entertainment,expense
+2026-01-25,Freelance,600,Income,income
+2026-02-01,Salary,4500,Income,income
+2026-02-02,Rent,-1600,Housing,expense
+2026-02-04,Groceries,-130,Food,expense
+2026-02-05,Coffee,-9,Food,expense
+2026-02-11,Electric bill,-88,Utilities,expense
+2026-02-15,Train card,-70,Transport,expense
+2026-02-18,Dinner,-52,Food,expense
+2026-02-20,Movie,-18,Entertainment,expense
+2026-02-22,Pharmacy,-24,Health,expense

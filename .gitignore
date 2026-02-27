@@ -1,0 +1,5 @@
+*.swp
+.DS_Store
+webapp/__pycache__/
+webapp/spend_records.db
+webapp/.env
