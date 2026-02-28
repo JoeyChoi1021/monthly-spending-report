@@ -19,6 +19,7 @@ const CATEGORIES = {
   ],
   "Non-Fixed Expense": ["Medical Fee", "Therapy Fee", "House Utility", "Eating"],
 };
+const UTILITY_SUBCATEGORIES = ["Water", "Electric", "Preston Service Fee"];
 
 const els = {
   roomInput: document.getElementById("roomInput"),
@@ -30,6 +31,7 @@ const els = {
   dateInput: document.getElementById("dateInput"),
   typeInput: document.getElementById("typeInput"),
   categoryInput: document.getElementById("categoryInput"),
+  subcategoryInput: document.getElementById("subcategoryInput"),
   amountInput: document.getElementById("amountInput"),
   paymentMethodInput: document.getElementById("paymentMethodInput"),
   noteInput: document.getElementById("noteInput"),
@@ -41,6 +43,8 @@ const els = {
   nonFixedTotal: document.getElementById("nonFixedTotal"),
   grandTotal: document.getElementById("grandTotal"),
   barChart: document.getElementById("barChart"),
+  toggleUtilityBtn: document.getElementById("toggleUtilityBtn"),
+  utilityBreakdown: document.getElementById("utilityBreakdown"),
   fixedTemplateGrid: document.getElementById("fixedTemplateGrid"),
   saveTemplateBtn: document.getElementById("saveTemplateBtn"),
   applyTemplateBtn: document.getElementById("applyTemplateBtn"),
@@ -70,6 +74,8 @@ let state = {
   },
   isRefreshing: false,
   pendingRefresh: false,
+  summaryUtilityBreakdown: [],
+  utilityBreakdownVisible: false,
 };
 
 const moneyFmt = new Intl.NumberFormat("en-US", {
@@ -86,13 +92,27 @@ function shiftMonth(yyyymm, delta) {
 function setCategories() {
   const selectedType = els.typeInput.value;
   const list = CATEGORIES[selectedType] || [];
+  const prior = els.categoryInput.value;
   els.categoryInput.innerHTML = "";
   list.forEach((item) => {
     const opt = document.createElement("option");
     opt.value = item;
     opt.textContent = item;
+    if (item === prior) opt.selected = true;
     els.categoryInput.appendChild(opt);
   });
+  syncSubcategoryUI();
+}
+
+function syncSubcategoryUI() {
+  const needsUtility =
+    els.typeInput.value === "Non-Fixed Expense" && els.categoryInput.value === "House Utility";
+  els.subcategoryInput.disabled = !needsUtility;
+  if (!needsUtility) {
+    els.subcategoryInput.value = "";
+  } else if (!UTILITY_SUBCATEGORIES.includes(els.subcategoryInput.value)) {
+    els.subcategoryInput.value = UTILITY_SUBCATEGORIES[0];
+  }
 }
 
 function showStatus(msg, isError = false) {
@@ -184,10 +204,14 @@ async function loadEntries() {
 
   data.items.forEach((item) => {
     const tr = document.createElement("tr");
+    const catLabel =
+      item.category === "House Utility" && item.subcategory
+        ? `${item.category} (${item.subcategory})`
+        : item.category;
     tr.innerHTML = `
       <td>${item.date}</td>
       <td>${item.expense_type}</td>
-      <td>${item.category}</td>
+      <td>${catLabel}</td>
       <td>${moneyFmt.format(item.amount)}</td>
       <td>${item.payment_method || ""}</td>
       <td>${item.note || ""}</td>
@@ -244,6 +268,26 @@ function renderBars(rows) {
   });
 }
 
+function renderUtilityBreakdown(rows) {
+  els.utilityBreakdown.innerHTML = "";
+  if (!rows || rows.length === 0) {
+    els.utilityBreakdown.textContent = "No utility breakdown yet.";
+    return;
+  }
+  const max = Math.max(...rows.map((r) => r.total), 1);
+  rows.forEach((row) => {
+    const pct = Math.max(2, Math.round((row.total / max) * 100));
+    const wrap = document.createElement("div");
+    wrap.className = "bar-row";
+    wrap.innerHTML = `
+      <span>${row.subcategory}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <strong>${moneyFmt.format(row.total)}</strong>
+    `;
+    els.utilityBreakdown.appendChild(wrap);
+  });
+}
+
 function renderForecastCategoryBars(rows) {
   els.forecastCategories.innerHTML = "";
   if (!rows.length) {
@@ -287,6 +331,10 @@ async function loadSummary() {
   els.nonFixedTotal.textContent = moneyFmt.format(data.totals.non_fixed_total);
   els.grandTotal.textContent = moneyFmt.format(data.totals.grand_total);
   renderBars(data.by_category);
+  state.summaryUtilityBreakdown = data.utility_breakdown || [];
+  if (state.utilityBreakdownVisible) {
+    renderUtilityBreakdown(state.summaryUtilityBreakdown);
+  }
 }
 
 async function refreshAll() {
@@ -372,6 +420,7 @@ async function onSubmit(event) {
     date: els.dateInput.value,
     expense_type: els.typeInput.value,
     category: els.categoryInput.value,
+    subcategory: els.subcategoryInput.value,
     amount: Number(els.amountInput.value),
     payment_method: els.paymentMethodInput.value,
     note: els.noteInput.value,
@@ -394,6 +443,7 @@ async function onSubmit(event) {
 
   els.amountInput.value = "";
   els.noteInput.value = "";
+  syncSubcategoryUI();
   showStatus("Saved. You can undo this add.");
   await refreshAll();
   await checkForChanges();
@@ -534,6 +584,7 @@ function init() {
   startLiveSync();
 
   els.typeInput.addEventListener("change", setCategories);
+  els.categoryInput.addEventListener("change", syncSubcategoryUI);
   els.expenseForm.addEventListener("submit", onSubmit);
 
   els.saveRoomBtn.addEventListener("click", async () => {
@@ -572,6 +623,17 @@ function init() {
   els.aiSummaryBtn.addEventListener("click", generateAISummary);
   els.forecastBtn.addEventListener("click", runForecast);
   els.undoLastBtn.addEventListener("click", undoLastAdd);
+  els.toggleUtilityBtn.addEventListener("click", () => {
+    state.utilityBreakdownVisible = !state.utilityBreakdownVisible;
+    if (state.utilityBreakdownVisible) {
+      els.utilityBreakdown.classList.remove("hidden");
+      renderUtilityBreakdown(state.summaryUtilityBreakdown);
+      els.toggleUtilityBtn.textContent = "Hide Utility Breakdown";
+    } else {
+      els.utilityBreakdown.classList.add("hidden");
+      els.toggleUtilityBtn.textContent = "Show Utility Breakdown";
+    }
+  });
 }
 
 init();

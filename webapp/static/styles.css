@@ -1,11 +1,13 @@
 :root {
-  --bg: #f8f2f8;
+  --bg: #f2f6fb;
   --panel: #ffffff;
-  --text: #202531;
-  --muted: #627087;
-  --line: #d8dee7;
-  --accent: #6f52f2;
-  --accent-soft: #c8ece7;
+  --text: #172235;
+  --muted: #5e6f88;
+  --line: #d9e1ee;
+  --primary: #0f6ccf;
+  --primary-soft: #e5f1ff;
+  --danger: #b83244;
+  --ok: #1e7f49;
 }
 
 * {
@@ -15,82 +17,65 @@
 body {
   margin: 0;
   font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
-  background: linear-gradient(160deg, #f7f4fb, #fdf7fb 50%, #fbf7ff);
+  background: radial-gradient(circle at top right, #e8f1ff 0%, var(--bg) 42%, #f8fbff 100%);
   color: var(--text);
 }
 
 .app {
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 18px;
+  display: grid;
+  gap: 14px;
 }
 
-.hero {
-  margin-bottom: 16px;
-}
-
-.hero-dropzone {
-  border: 2px dashed #6f52f2;
-  background: #e9e7f6;
-  color: #6f52f2;
-  text-align: center;
-  padding: 34px 12px;
-  font-size: 24px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-}
-
-.hero-art {
-  position: relative;
-  min-height: 320px;
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
   border-radius: 12px;
-  overflow: hidden;
-  background: #e7bfd8;
+  padding: 14px;
+  box-shadow: 0 6px 24px rgba(23, 34, 53, 0.05);
 }
 
-.hero-title {
+.app-header h1 {
   margin: 0;
-  position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  font-size: clamp(44px, 10vw, 128px);
-  letter-spacing: 0.14em;
-  font-weight: 800;
-  text-transform: uppercase;
-  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.18);
+  font-size: clamp(24px, 4vw, 34px);
 }
 
-.bubble {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffd748, #f4c534 58%, #cb9117);
-  box-shadow: 0 20px 0 #d8459e;
+.app-header p {
+  margin: 6px 0 0;
+  color: var(--muted);
 }
 
-.bubble-1 {
-  width: 170px;
-  height: 170px;
-  top: 22px;
-  left: 18%;
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-.bubble-2 {
-  width: 220px;
-  height: 220px;
-  bottom: 28px;
-  right: 14%;
+.live-pill {
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff8d8;
+  color: #8d6700;
+  border: 1px solid #f0db87;
+  white-space: nowrap;
 }
 
-.bubble-3 {
-  width: 150px;
-  height: 150px;
-  bottom: 20px;
-  left: -30px;
+.live-pill.ok {
+  background: #e8f9ef;
+  color: var(--ok);
+  border-color: #b4e4c7;
 }
 
-header h2 {
-  margin: 0 0 14px;
+.live-pill.error {
+  background: #fdecef;
+  color: var(--danger);
+  border-color: #f5b4bf;
 }
 
 .top-controls {
@@ -104,41 +89,39 @@ label {
   display: grid;
   gap: 4px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 input,
 select,
 button {
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 9px 10px;
+  border-radius: 10px;
+  padding: 10px 11px;
   font-size: 14px;
+  min-height: 40px;
 }
 
 button {
-  background: var(--accent);
+  background: var(--primary);
   color: #fff;
-  border: none;
+  border: 1px solid var(--primary);
   cursor: pointer;
+  font-weight: 600;
 }
 
 button:hover {
-  opacity: 0.92;
+  opacity: 0.94;
 }
 
 .grid {
-  margin-top: 14px;
   display: grid;
   gap: 14px;
   grid-template-columns: 1fr 1fr;
 }
 
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 14px;
+h2 {
+  margin-top: 0;
 }
 
 .form-row {
@@ -151,6 +134,7 @@ button:hover {
 .status {
   min-height: 22px;
   color: var(--muted);
+  margin-top: 8px;
 }
 
 .totals {
@@ -163,13 +147,18 @@ button:hover {
   display: flex;
   justify-content: space-between;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fcfdff;
 }
 
 .bar-chart {
   display: grid;
   gap: 8px;
+}
+
+.hidden {
+  display: none;
 }
 
 .bar-row {
@@ -189,7 +178,7 @@ button:hover {
 
 .bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #2da1ff, #007a6e);
+  background: linear-gradient(90deg, #37a1ff, #0f6ccf);
 }
 
 .table-wrap {
@@ -214,14 +203,16 @@ th {
 }
 
 .delete-btn {
-  background: #b83244;
+  background: var(--danger);
+  border-color: var(--danger);
   padding: 6px 8px;
+  min-height: 32px;
 }
 
 .ai-summary {
   min-height: 40px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 8px;
   line-height: 1.4;
   background: #f8fbff;
@@ -246,16 +237,16 @@ th {
 
 .forecast-cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
   gap: 8px;
   margin: 10px 0;
 }
 
 .forecast-cards div {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 8px;
-  background: #fafcff;
+  background: var(--primary-soft);
 }
 
 .forecast-cards strong {
@@ -264,33 +255,14 @@ th {
   font-size: 16px;
 }
 
-@media (max-width: 900px) {
-  .hero-dropzone {
-    font-size: 18px;
-    padding: 22px 10px;
-  }
-
-  .hero-art {
-    min-height: 240px;
-  }
-
-  .bubble-1 {
-    width: 120px;
-    height: 120px;
-  }
-
-  .bubble-2 {
-    width: 150px;
-    height: 150px;
-  }
-
-  .bubble-3 {
-    width: 100px;
-    height: 100px;
-  }
-
+@media (max-width: 960px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .header-top {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .form-row {
@@ -307,5 +279,26 @@ th {
 
   .forecast-cards {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 12px;
+  }
+
+  .fixed-grid,
+  .forecast-cards {
+    grid-template-columns: 1fr;
+  }
+
+  input,
+  select,
+  button {
+    width: 100%;
+  }
+
+  .top-controls > button {
+    width: auto;
   }
 }

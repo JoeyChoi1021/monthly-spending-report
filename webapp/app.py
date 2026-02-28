@@ -52,6 +52,11 @@ NON_FIXED_CATEGORIES = [
     "House Utility",
     "Eating",
 ]
+UTILITY_SUBCATEGORIES = [
+    "Water",
+    "Electric",
+    "Preston Service Fee",
+]
 
 ALLOWED_TYPES = {
     "Fixed Expense": FIXED_CATEGORIES,
@@ -129,6 +134,7 @@ def init_db() -> None:
                 date DATE NOT NULL,
                 expense_type TEXT NOT NULL,
                 category TEXT NOT NULL,
+                subcategory TEXT,
                 amount NUMERIC(12,2) NOT NULL,
                 payment_method TEXT,
                 note TEXT,
@@ -136,6 +142,7 @@ def init_db() -> None:
             )
             """
         )
+        execute_sql("ALTER TABLE expenses ADD COLUMN IF NOT EXISTS subcategory TEXT")
         execute_sql("CREATE INDEX IF NOT EXISTS idx_expenses_room_date ON expenses(room, date)")
         execute_sql(
             """
@@ -159,6 +166,7 @@ def init_db() -> None:
                 date TEXT NOT NULL,
                 expense_type TEXT NOT NULL,
                 category TEXT NOT NULL,
+                subcategory TEXT,
                 amount REAL NOT NULL,
                 payment_method TEXT,
                 note TEXT,
@@ -166,6 +174,10 @@ def init_db() -> None:
             )
             """
         )
+        cols = conn.execute("PRAGMA table_info(expenses)").fetchall()
+        has_subcategory = any(col[1] == "subcategory" for col in cols)
+        if not has_subcategory:
+            conn.execute("ALTER TABLE expenses ADD COLUMN subcategory TEXT")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_expenses_room_date ON expenses(room, date)")
         conn.execute(
             """
@@ -227,6 +239,7 @@ def create_expense(payload: dict) -> int:
     date = (payload.get("date") or "").strip()
     expense_type = (payload.get("expense_type") or "").strip()
     category = (payload.get("category") or "").strip()
+    subcategory = (payload.get("subcategory") or "").strip()
     payment_method = (payload.get("payment_method") or "").strip()[:50]
     note = (payload.get("note") or "").strip()[:300]
     amount = parse_amount(payload.get("amount"))
@@ -237,11 +250,16 @@ def create_expense(payload: dict) -> int:
         raise ValueError("Invalid expense type")
     if category not in ALLOWED_TYPES[expense_type]:
         raise ValueError("Category does not match expense type")
+    if category == "House Utility":
+        if subcategory not in UTILITY_SUBCATEGORIES:
+            raise ValueError("House Utility requires a valid subcategory")
+    else:
+        subcategory = ""
 
     insert_sql = (
         """
-        INSERT INTO expenses (room, date, expense_type, category, amount, payment_method, note)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO expenses (room, date, expense_type, category, subcategory, amount, payment_method, note)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
     )
     if USE_POSTGRES:
@@ -249,7 +267,7 @@ def create_expense(payload: dict) -> int:
 
     return insert_and_get_id(
         insert_sql,
-        (room or "home", date, expense_type, category, amount, payment_method, note),
+        (room or "home", date, expense_type, category, subcategory, amount, payment_method, note),
     )
 
 
@@ -809,6 +827,7 @@ class SpendHandler(BaseHTTPRequestHandler):
             payload = {
                 "fixed_categories": FIXED_CATEGORIES,
                 "non_fixed_categories": NON_FIXED_CATEGORIES,
+                "utility_subcategories": UTILITY_SUBCATEGORIES,
                 "expense_types": list(ALLOWED_TYPES.keys()),
                 "db_mode": db_mode(),
             }
@@ -829,7 +848,7 @@ class SpendHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/expenses":
             rows = fetch_all(
                 """
-                SELECT id, room, date, expense_type, category, amount, payment_method, note, created_at
+                SELECT id, room, date, expense_type, category, subcategory, amount, payment_method, note, created_at
                 FROM expenses
                 WHERE room = ? AND date >= ? AND date < ?
                 ORDER BY date DESC, id DESC
@@ -846,19 +865,20 @@ class SpendHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/export.csv":
             rows = fetch_all(
                 """
-                SELECT date, expense_type, category, amount, payment_method, note, created_at
+                SELECT date, expense_type, category, subcategory, amount, payment_method, note, created_at
                 FROM expenses
                 WHERE room = ? AND date >= ? AND date < ?
                 ORDER BY date ASC, id ASC
                 """,
                 (room, start, end),
             )
-            lines = ["date,expense_type,category,amount,payment_method,note,created_at"]
+            lines = ["date,expense_type,category,subcategory,amount,payment_method,note,created_at"]
             for row in rows:
                 fields = [
                     str(row["date"]),
                     str(row["expense_type"]),
                     str(row["category"]),
+                    str(row.get("subcategory") or ""),
                     f"{float(row['amount']):.2f}",
                     str(row.get("payment_method") or ""),
                     str(row.get("note") or ""),
@@ -903,6 +923,16 @@ class SpendHandler(BaseHTTPRequestHandler):
                 """,
                 (room, start, end),
             ) or {}
+            utility_rows = fetch_all(
+                """
+                SELECT COALESCE(NULLIF(subcategory, ''), 'Unspecified') AS subcategory, SUM(amount) AS total
+                FROM expenses
+                WHERE room = ? AND date >= ? AND date < ? AND category = 'House Utility'
+                GROUP BY COALESCE(NULLIF(subcategory, ''), 'Unspecified')
+                ORDER BY total DESC
+                """,
+                (room, start, end),
+            )
 
             json_response(
                 self,
@@ -916,6 +946,9 @@ class SpendHandler(BaseHTTPRequestHandler):
                         "non_fixed_total": round(float(totals.get("non_fixed_total") or 0.0), 2),
                         "grand_total": round(float(totals.get("grand_total") or 0.0), 2),
                     },
+                    "utility_breakdown": [
+                        {"subcategory": row["subcategory"], "total": float(row["total"] or 0.0)} for row in utility_rows
+                    ],
                     "room": room,
                     "month": month,
                 },

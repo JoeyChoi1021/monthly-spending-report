@@ -8,30 +8,29 @@
   </head>
   <body>
     <div class="app">
-      <section class="hero">
-        <div class="hero-dropzone">Choose a section and drop it anywhere on the page...</div>
-        <div class="hero-art">
-          <div class="bubble bubble-1"></div>
-          <div class="bubble bubble-2"></div>
-          <div class="bubble bubble-3"></div>
-          <h1 class="hero-title">SWEET SPEND</h1>
+      <header class="app-header panel">
+        <div class="header-top">
+          <div>
+            <h1>Shared Spend Tracker</h1>
+            <p>Track monthly shared expenses with live updates.</p>
+          </div>
+          <div id="liveStatusPill" class="live-pill">Live sync: connecting...</div>
         </div>
-      </section>
 
-      <header>
-        <h2>Shared Spend Tracker</h2>
         <div class="top-controls">
           <label>
             Shared Room
-            <input id="roomInput" type="text" maxlength="50" />
+            <input id="roomInput" type="text" maxlength="50" placeholder="home" />
           </label>
           <button id="saveRoomBtn" type="button">Apply Room</button>
+
           <button id="prevMonthBtn" type="button">Prev Month</button>
           <label>
             Month
             <input id="monthInput" type="month" />
           </label>
           <button id="nextMonthBtn" type="button">Next Month</button>
+
           <button id="exportCsvBtn" type="button">Export CSV</button>
         </div>
       </header>
@@ -67,12 +66,24 @@
 
             <div class="form-row">
               <label>
+                Utility Subcategory
+                <select id="subcategoryInput" name="subcategory" disabled>
+                  <option value="">Select utility subcategory</option>
+                  <option value="Water">Water</option>
+                  <option value="Electric">Electric</option>
+                  <option value="Preston Service Fee">Preston Service Fee</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
                 Payment Method
                 <input id="paymentMethodInput" name="payment_method" type="text" placeholder="Card / Cash / Bank" />
               </label>
               <label>
                 Note
-                <input id="noteInput" name="note" type="text" maxlength="300" />
+                <input id="noteInput" name="note" type="text" maxlength="300" placeholder="Optional note" />
               </label>
             </div>
 
@@ -91,8 +102,15 @@
             <div><span>Non-Fixed Expense</span><strong id="nonFixedTotal">$0.00</strong></div>
             <div><span>Total</span><strong id="grandTotal">$0.00</strong></div>
           </div>
+          <p id="lastSyncText" class="status">Waiting for data...</p>
+
           <h3>Spend by Category</h3>
           <div id="barChart" class="bar-chart"></div>
+          <div class="template-actions">
+            <button id="toggleUtilityBtn" type="button">Show Utility Breakdown</button>
+          </div>
+          <div id="utilityBreakdown" class="bar-chart hidden"></div>
+
           <h3>AI Summary</h3>
           <button id="aiSummaryBtn" type="button">Generate AI Summary</button>
           <p id="aiStatus" class="status"></p>
@@ -102,7 +120,7 @@
 
       <section class="panel">
         <h2>Fixed Expense Template (Monthly)</h2>
-        <p class="status">Enter your regular monthly fixed amounts once, then click apply every month.</p>
+        <p class="status">Enter monthly fixed amounts once, then apply each month.</p>
         <div id="fixedTemplateGrid" class="fixed-grid"></div>
         <div class="template-actions">
           <button id="saveTemplateBtn" type="button">Save Template</button>
