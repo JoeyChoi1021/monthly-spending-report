@@ -1,15 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:wght@400;600&display=swap");
 
 :root {
-  --bg: #fff4fb;
-  --panel: #ffffff;
-  --text: #5e2b4a;
-  --muted: #8d5a76;
-  --line: #f1cfe1;
-  --primary: #ff69b4;
-  --primary-soft: #ffe9f5;
-  --danger: #d7497e;
-  --ok: #35a96f;
+  --bg: #edeef2;
+  --panel: #f8f8fb;
+  --text: #0e1117;
+  --muted: #60636b;
+  --line: #d9dce3;
+  --primary: #141922;
+  --primary-soft: #f1f2f6;
+  --danger: #be2f48;
+  --ok: #228a58;
+  --accent-yellow: #ece53f;
 }
 
 * {
@@ -18,8 +19,8 @@
 
 body {
   margin: 0;
-  font-family: "Poppins", "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top right, #ffdff1 0%, var(--bg) 42%, #fff8fd 100%);
+  font-family: "Plus Jakarta Sans", "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #eceef2 0%, #f2f4f8 100%);
   color: var(--text);
 }
 
@@ -34,21 +35,23 @@ body {
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 14px;
   padding: 16px;
-  box-shadow: 0 12px 30px rgba(244, 131, 184, 0.18);
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.05);
 }
 
 .app-header h1 {
   margin: 0;
   font-size: clamp(28px, 4vw, 40px);
-  font-family: "Playfair Display", Georgia, serif;
-  letter-spacing: 0.02em;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -0.02em;
 }
 
 .app-header p {
   margin: 6px 0 0;
   color: var(--muted);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(18px, 2vw, 24px);
 }
 
 .header-top {
@@ -64,9 +67,9 @@ body {
   padding: 7px 12px;
   font-size: 13px;
   font-weight: 700;
-  background: #ffe9f7;
-  color: #a24175;
-  border: 1px solid #f7b6d6;
+  background: #f8f9fc;
+  color: #4d5562;
+  border: 1px solid #d5d9e0;
   white-space: nowrap;
 }
 
@@ -107,9 +110,9 @@ button {
 }
 
 button {
-  background: linear-gradient(135deg, #ff7ebe, var(--primary));
+  background: var(--primary);
   color: #fff;
-  border: 1px solid #ff8fc7;
+  border: 1px solid #0f1219;
   cursor: pointer;
   font-weight: 600;
 }
@@ -126,12 +129,14 @@ button:hover {
 
 h2 {
   margin-top: 0;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-size: clamp(22px, 3vw, 30px);
+  letter-spacing: -0.02em;
 }
 
 h3 {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .form-row {
@@ -157,9 +162,9 @@ h3 {
   display: flex;
   justify-content: space-between;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 10px;
-  background: #fff8fd;
+  background: #f5f6fa;
 }
 
 .bar-chart {
@@ -188,7 +193,7 @@ h3 {
 
 .bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff8fca, #ff5ead);
+  background: linear-gradient(90deg, #202530, #10141d);
 }
 
 .table-wrap {
@@ -222,10 +227,10 @@ th {
 .ai-summary {
   min-height: 40px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 8px;
   line-height: 1.4;
-  background: #fff6fc;
+  background: #f6f7fb;
 }
 
 .fixed-grid {
@@ -254,13 +259,13 @@ th {
 
 .forecast-cards div {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 8px;
   background: var(--primary-soft);
 }
 
 .main-layer {
-  background: linear-gradient(180deg, #fff7fc 0%, #ffeef8 100%);
+  background: linear-gradient(180deg, #f2f3f7 0%, #eceff5 100%);
 }
 
 .main-head h2 {
@@ -270,6 +275,8 @@ th {
 .main-head p {
   margin-top: 0;
   color: var(--muted);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(18px, 2vw, 24px);
 }
 
 .kpi-row {
@@ -289,19 +296,19 @@ th {
 }
 
 .kpi-highlight {
-  background: linear-gradient(135deg, #ffe26b 0%, #ffc5e3 100%) !important;
+  background: linear-gradient(135deg, #fff9a8 0%, var(--accent-yellow) 100%) !important;
 }
 
 .chart-shell {
   margin-top: 8px;
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fffafd;
+  border-radius: 12px;
+  background: #f6f7fb;
 }
 
 .sub-layer {
-  border-top: 5px solid #ffc0df;
+  border-top: 4px solid #dfe3eb;
 }
 
 .forecast-cards strong {
