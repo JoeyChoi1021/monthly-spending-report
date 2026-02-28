@@ -36,20 +36,35 @@
       </header>
 
       <section class="panel main-layer">
-        <h2>Main Layer: Monthly Summary</h2>
-        <div class="totals">
-          <div><span>Fixed Expense</span><strong id="fixedTotal">$0.00</strong></div>
-          <div><span>Non-Fixed Expense</span><strong id="nonFixedTotal">$0.00</strong></div>
-          <div><span>Total</span><strong id="grandTotal">$0.00</strong></div>
+        <div class="main-head">
+          <h2>Good morning, Princess Team</h2>
+          <p>Your monthly spending metrics are ready to review.</p>
+        </div>
+
+        <div class="totals kpi-row">
+          <div class="kpi-card">
+            <span>Fixed Expense</span>
+            <strong id="fixedTotal">$0.00</strong>
+          </div>
+          <div class="kpi-card">
+            <span>Non-Fixed Expense</span>
+            <strong id="nonFixedTotal">$0.00</strong>
+          </div>
+          <div class="kpi-card kpi-highlight">
+            <span>Total Monthly Spend</span>
+            <strong id="grandTotal">$0.00</strong>
+          </div>
         </div>
         <p id="lastSyncText" class="status">Waiting for data...</p>
 
-        <h3>Spend by Category</h3>
-        <div id="barChart" class="bar-chart"></div>
-        <div class="template-actions">
-          <button id="toggleUtilityBtn" type="button">Show Utility Breakdown</button>
+        <div class="chart-shell">
+          <h3>Spend by Category</h3>
+          <div id="barChart" class="bar-chart"></div>
+          <div class="template-actions">
+            <button id="toggleUtilityBtn" type="button">Show Utility Breakdown</button>
+          </div>
+          <div id="utilityBreakdown" class="bar-chart hidden"></div>
         </div>
-        <div id="utilityBreakdown" class="bar-chart hidden"></div>
       </section>
 
       <section class="grid">
