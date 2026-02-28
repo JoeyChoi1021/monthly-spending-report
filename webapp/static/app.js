@@ -10,6 +10,7 @@ const CATEGORIES = {
     "House Insurance",
     "Car Subscription",
     "Spotify Subscription",
+    "Amazon Subscription",
     "Hulu Subscription",
     "Netflix Subscription",
     "Viki Subscription",
@@ -51,6 +52,8 @@ const els = {
   forecastStatus: document.getElementById("forecastStatus"),
   forecastCards: document.getElementById("forecastCards"),
   forecastCategories: document.getElementById("forecastCategories"),
+  liveStatusPill: document.getElementById("liveStatusPill"),
+  lastSyncText: document.getElementById("lastSyncText"),
 };
 
 const url = new URL(window.location.href);
@@ -59,6 +62,14 @@ let state = {
   month: url.searchParams.get("month") || new Date().toISOString().slice(0, 7),
   entries: [],
   lastAddedExpenseId: null,
+  templateValues: {},
+  live: {
+    digest: null,
+    timer: null,
+    errors: 0,
+  },
+  isRefreshing: false,
+  pendingRefresh: false,
 };
 
 const moneyFmt = new Intl.NumberFormat("en-US", {
@@ -70,18 +81,6 @@ function shiftMonth(yyyymm, delta) {
   const [y, m] = yyyymm.split("-").map(Number);
   const base = new Date(y, m - 1 + delta, 1);
   return `${base.getFullYear()}-${String(base.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function templateKey() {
-  return `fixed-template:${state.room}`;
-}
-
-function getTemplate() {
-  try {
-    return JSON.parse(localStorage.getItem(templateKey()) || "{}");
-  } catch {
-    return {};
-  }
 }
 
 function setCategories() {
@@ -120,6 +119,19 @@ function showForecastStatus(msg, isError = false) {
   els.forecastStatus.style.color = isError ? "#b83244" : "#627087";
 }
 
+function setLiveStatus(msg, mode) {
+  if (!els.liveStatusPill) return;
+  els.liveStatusPill.textContent = msg;
+  els.liveStatusPill.classList.remove("ok", "error");
+  if (mode === "ok") els.liveStatusPill.classList.add("ok");
+  if (mode === "error") els.liveStatusPill.classList.add("error");
+}
+
+function setLastSyncText(msg) {
+  if (!els.lastSyncText) return;
+  els.lastSyncText.textContent = msg;
+}
+
 function formatAddedAt(ts) {
   if (!ts) return "";
   const d = new Date(ts);
@@ -134,8 +146,7 @@ function buildApiUrl(path) {
   return out;
 }
 
-function renderFixedTemplateInputs() {
-  const values = getTemplate();
+function renderFixedTemplateInputs(values = state.templateValues || {}) {
   els.fixedTemplateGrid.innerHTML = "";
 
   CATEGORIES["Fixed Expense"].forEach((cat) => {
@@ -205,6 +216,7 @@ async function loadEntries() {
       }
       showStatus("Deleted.");
       await refreshAll();
+      await checkForChanges();
     });
   });
 }
@@ -278,11 +290,78 @@ async function loadSummary() {
 }
 
 async function refreshAll() {
+  if (state.isRefreshing) {
+    state.pendingRefresh = true;
+    return;
+  }
+
+  state.isRefreshing = true;
   try {
     await Promise.all([loadEntries(), loadSummary()]);
+    const now = new Date();
+    setLastSyncText(`Last synced: ${now.toLocaleTimeString()}`);
   } catch (err) {
     showStatus(err.message, true);
+  } finally {
+    state.isRefreshing = false;
+    if (state.pendingRefresh) {
+      state.pendingRefresh = false;
+      refreshAll();
+    }
   }
+}
+
+async function loadTemplate() {
+  const endpoint = new URL("/api/template", window.location.origin);
+  endpoint.searchParams.set("room", state.room);
+  const res = await fetch(endpoint);
+  if (!res.ok) throw new Error("Failed to load template");
+  const data = await res.json();
+  state.templateValues = data.template || {};
+  renderFixedTemplateInputs(state.templateValues);
+}
+
+async function fetchChangesDigest() {
+  const res = await fetch(buildApiUrl("/api/changes"));
+  if (!res.ok) throw new Error("Live sync unavailable");
+  const data = await res.json();
+  return data.signature || null;
+}
+
+async function checkForChanges() {
+  try {
+    const nextDigest = await fetchChangesDigest();
+
+    if (!state.live.digest) {
+      state.live.digest = nextDigest;
+      state.live.errors = 0;
+      setLiveStatus("Live sync: on", "ok");
+      return;
+    }
+
+    if (nextDigest !== state.live.digest) {
+      state.live.digest = nextDigest;
+      await refreshAll();
+      setLiveStatus("Live sync: updated", "ok");
+      return;
+    }
+
+    state.live.errors = 0;
+    setLiveStatus("Live sync: on", "ok");
+  } catch {
+    state.live.errors += 1;
+    setLiveStatus("Live sync: reconnecting...", "error");
+  }
+}
+
+function startLiveSync() {
+  if (state.live.timer) {
+    clearInterval(state.live.timer);
+  }
+  state.live.digest = null;
+  state.live.errors = 0;
+  checkForChanges();
+  state.live.timer = setInterval(checkForChanges, 1500);
 }
 
 async function onSubmit(event) {
@@ -317,6 +396,7 @@ async function onSubmit(event) {
   els.noteInput.value = "";
   showStatus("Saved. You can undo this add.");
   await refreshAll();
+  await checkForChanges();
 }
 
 async function undoLastAdd() {
@@ -336,6 +416,7 @@ async function undoLastAdd() {
   setUndoState();
   showStatus("Last add reverted.");
   await refreshAll();
+  await checkForChanges();
 }
 
 async function applyFixedTemplate() {
@@ -367,6 +448,25 @@ async function applyFixedTemplate() {
     }, removed duplicates ${data.removed_duplicates || 0}).`
   );
   await refreshAll();
+  await checkForChanges();
+}
+
+async function saveTemplate() {
+  const template = collectTemplateValues();
+  const res = await fetch("/api/template", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ room: state.room, template }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    showTemplateStatus(data.error || "Template save failed.", true);
+    return;
+  }
+  state.templateValues = template;
+  renderFixedTemplateInputs(state.templateValues);
+  showTemplateStatus(`Template saved (${data.saved_categories || 0} categories).`);
+  await checkForChanges();
 }
 
 async function generateAISummary() {
@@ -418,6 +518,7 @@ async function updateMonth(nextMonth) {
   els.monthInput.value = state.month;
   els.dateInput.value = `${state.month}-01`;
   applyRoomAndMonthToUrl();
+  startLiveSync();
   await refreshAll();
 }
 
@@ -429,7 +530,8 @@ function init() {
 
   setCategories();
   renderFixedTemplateInputs();
-  refreshAll();
+  Promise.all([refreshAll(), loadTemplate()]).catch((err) => showTemplateStatus(err.message, true));
+  startLiveSync();
 
   els.typeInput.addEventListener("change", setCategories);
   els.expenseForm.addEventListener("submit", onSubmit);
@@ -439,8 +541,8 @@ function init() {
     state.lastAddedExpenseId = null;
     setUndoState();
     applyRoomAndMonthToUrl();
-    renderFixedTemplateInputs();
-    await refreshAll();
+    startLiveSync();
+    await Promise.all([refreshAll(), loadTemplate()]);
   });
 
   els.monthInput.addEventListener("change", async () => {
@@ -464,17 +566,12 @@ function init() {
 
   els.exportCsvBtn.addEventListener("click", exportCsv);
 
-  els.saveTemplateBtn.addEventListener("click", () => {
-    localStorage.setItem(templateKey(), JSON.stringify(collectTemplateValues()));
-    showTemplateStatus("Template saved for this room.");
-  });
+  els.saveTemplateBtn.addEventListener("click", saveTemplate);
 
   els.applyTemplateBtn.addEventListener("click", applyFixedTemplate);
   els.aiSummaryBtn.addEventListener("click", generateAISummary);
   els.forecastBtn.addEventListener("click", runForecast);
   els.undoLastBtn.addEventListener("click", undoLastAdd);
-
-  setInterval(refreshAll, 3000);
 }
 
 init();

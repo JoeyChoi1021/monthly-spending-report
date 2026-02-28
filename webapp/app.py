@@ -38,6 +38,7 @@ FIXED_CATEGORIES = [
     "House Insurance",
     "Car Subscription",
     "Spotify Subscription",
+    "Amazon Subscription",
     "Hulu Subscription",
     "Netflix Subscription",
     "Viki Subscription",
@@ -136,6 +137,17 @@ def init_db() -> None:
             """
         )
         execute_sql("CREATE INDEX IF NOT EXISTS idx_expenses_room_date ON expenses(room, date)")
+        execute_sql(
+            """
+            CREATE TABLE IF NOT EXISTS fixed_templates (
+                room TEXT NOT NULL,
+                category TEXT NOT NULL,
+                amount NUMERIC(12,2) NOT NULL,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (room, category)
+            )
+            """
+        )
         return
 
     with sqlite3.connect(DB_PATH) as conn:
@@ -155,6 +167,17 @@ def init_db() -> None:
             """
         )
         conn.execute("CREATE INDEX IF NOT EXISTS idx_expenses_room_date ON expenses(room, date)")
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS fixed_templates (
+                room TEXT NOT NULL,
+                category TEXT NOT NULL,
+                amount REAL NOT NULL,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (room, category)
+            )
+            """
+        )
 
 
 def validate_date(date_str: str) -> bool:
@@ -510,6 +533,81 @@ def sync_fixed_template(room: str, month: str, template: dict) -> dict:
     }
 
 
+def get_fixed_template(room: str) -> dict:
+    rows = fetch_all(
+        """
+        SELECT category, amount
+        FROM fixed_templates
+        WHERE room = ?
+        ORDER BY category ASC
+        """,
+        (room or "home",),
+    )
+    out = {}
+    for row in rows:
+        out[row["category"]] = float(row["amount"] or 0.0)
+    return out
+
+
+def save_fixed_template(room: str, template: dict) -> dict:
+    room = (room or "home").strip()[:50]
+    normalized = {}
+    for cat, raw in (template or {}).items():
+        if cat not in FIXED_CATEGORIES:
+            continue
+        amt = parse_amount(raw)
+        if amt > 0:
+            normalized[cat] = amt
+
+    with connect_db() as conn:
+        conn.execute(adapt_sql("DELETE FROM fixed_templates WHERE room = ?"), (room,))
+        for cat, amount in normalized.items():
+            conn.execute(
+                adapt_sql(
+                    """
+                    INSERT INTO fixed_templates (room, category, amount, updated_at)
+                    VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+                    """
+                ),
+                (room, cat, amount),
+            )
+        if not USE_POSTGRES:
+            conn.commit()
+    return {"room": room, "saved_categories": len(normalized)}
+
+
+def build_changes_digest(room: str, month: str) -> dict:
+    start, end = month_bounds(month)
+    row = fetch_one(
+        """
+        SELECT
+          COUNT(*) AS item_count,
+          MAX(id) AS max_id,
+          MAX(created_at) AS latest_created_at,
+          SUM(amount) AS total_amount
+        FROM expenses
+        WHERE room = ? AND date >= ? AND date < ?
+        """,
+        (room, start, end),
+    ) or {}
+
+    item_count = int(row.get("item_count") or 0)
+    max_id = int(row.get("max_id") or 0)
+    latest_created_at = str(row.get("latest_created_at") or "")
+    total_amount = round(float(row.get("total_amount") or 0.0), 2)
+    signature = f"{item_count}:{max_id}:{latest_created_at}:{total_amount:.2f}"
+
+    return {
+        "room": room,
+        "month": month,
+        "item_count": item_count,
+        "max_id": max_id,
+        "latest_created_at": latest_created_at,
+        "total_amount": total_amount,
+        "signature": signature,
+    }
+
+
 class SpendHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -527,6 +625,9 @@ class SpendHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/expenses/bulk":
             self.create_bulk_expenses()
+            return
+        if parsed.path == "/api/template":
+            self.save_template()
             return
         if parsed.path == "/api/template/sync":
             self.apply_template_sync()
@@ -578,6 +679,26 @@ class SpendHandler(BaseHTTPRequestHandler):
                 return
 
         json_response(self, HTTPStatus.CREATED, {"ok": True, "ids": inserted})
+
+    def save_template(self) -> None:
+        length = int(self.headers.get("Content-Length", "0"))
+        body = self.rfile.read(length)
+        try:
+            payload = json.loads(body)
+        except json.JSONDecodeError:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": "Invalid JSON"})
+            return
+        room = (payload.get("room") or "home").strip()[:50]
+        template = payload.get("template") or {}
+        if not isinstance(template, dict):
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": "template must be an object"})
+            return
+        try:
+            result = save_fixed_template(room=room, template=template)
+        except ValueError as err:
+            json_response(self, HTTPStatus.BAD_REQUEST, {"error": str(err)})
+            return
+        json_response(self, HTTPStatus.OK, {"ok": True, **result})
 
     def apply_template_sync(self) -> None:
         length = int(self.headers.get("Content-Length", "0"))
@@ -694,6 +815,10 @@ class SpendHandler(BaseHTTPRequestHandler):
             json_response(self, HTTPStatus.OK, payload)
             return
 
+        if parsed.path == "/api/template":
+            json_response(self, HTTPStatus.OK, {"room": room, "template": get_fixed_template(room)})
+            return
+
         month = query.get("month", [None])[0] or dt.date.today().strftime("%Y-%m")
         try:
             start, end = month_bounds(month)
@@ -795,6 +920,11 @@ class SpendHandler(BaseHTTPRequestHandler):
                     "month": month,
                 },
             )
+            return
+
+        if parsed.path == "/api/changes":
+            payload = build_changes_digest(room=room, month=month)
+            json_response(self, HTTPStatus.OK, payload)
             return
 
         if parsed.path == "/api/forecast":
