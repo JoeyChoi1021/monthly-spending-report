@@ -17,6 +17,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: "Plus Jakarta Sans", "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
@@ -30,6 +34,110 @@ body {
   padding: 18px;
   display: grid;
   gap: 14px;
+}
+
+a {
+  color: inherit;
+}
+
+.landing {
+  padding: 20px;
+  background: linear-gradient(180deg, #bcd9f3 0%, #c8dbed 62%, #efe7d5 100%);
+}
+
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 42px;
+  letter-spacing: -0.04em;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-weight: 600;
+}
+
+.nav-links a {
+  text-decoration: none;
+}
+
+.get-started {
+  font-weight: 700;
+}
+
+.hero-copy {
+  text-align: center;
+  margin: 52px auto 10px;
+}
+
+.hero-copy h2 {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: 0.98;
+  margin: 0;
+}
+
+.hero-copy p {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(20px, 2vw, 34px);
+  margin-top: 18px;
+}
+
+.hero-cta {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 22px 0 32px;
+}
+
+.cta-btn {
+  text-decoration: none;
+  color: #fff;
+  background: #090a0d;
+  border: 1px solid #090a0d;
+  border-radius: 2px;
+  padding: 12px 18px;
+  font-weight: 700;
+}
+
+.hero-frame {
+  max-width: 930px;
+  margin: 0 auto;
+  height: 220px;
+  border: 3px solid #16181f;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.chapter-layer h2 {
+  margin-bottom: 8px;
+}
+
+.chapter-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+}
+
+.chapter-card {
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.chapter-card:hover {
+  background: #f7f8fd;
 }
 
 .panel {
@@ -318,6 +426,19 @@ th {
 }
 
 @media (max-width: 960px) {
+  .landing-nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand {
+    font-size: 32px;
+  }
+
+  .chapter-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
@@ -351,6 +472,22 @@ th {
 @media (max-width: 640px) {
   .app {
     padding: 12px;
+  }
+
+  .hero-copy {
+    margin-top: 30px;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+  }
+
+  .hero-frame {
+    height: 150px;
+  }
+
+  .chapter-grid {
+    grid-template-columns: 1fr;
   }
 
   .fixed-grid,
