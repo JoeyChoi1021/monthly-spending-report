@@ -1,13 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
+
 :root {
-  --bg: #f2f6fb;
+  --bg: #fff4fb;
   --panel: #ffffff;
-  --text: #172235;
-  --muted: #5e6f88;
-  --line: #d9e1ee;
-  --primary: #0f6ccf;
-  --primary-soft: #e5f1ff;
-  --danger: #b83244;
-  --ok: #1e7f49;
+  --text: #5e2b4a;
+  --muted: #8d5a76;
+  --line: #f1cfe1;
+  --primary: #ff69b4;
+  --primary-soft: #ffe9f5;
+  --danger: #d7497e;
+  --ok: #35a96f;
 }
 
 * {
@@ -16,8 +18,8 @@
 
 body {
   margin: 0;
-  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top right, #e8f1ff 0%, var(--bg) 42%, #f8fbff 100%);
+  font-family: "Poppins", "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top right, #ffdff1 0%, var(--bg) 42%, #fff8fd 100%);
   color: var(--text);
 }
 
@@ -32,14 +34,16 @@ body {
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 14px;
-  box-shadow: 0 6px 24px rgba(23, 34, 53, 0.05);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 12px 30px rgba(244, 131, 184, 0.18);
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: clamp(24px, 4vw, 34px);
+  font-size: clamp(28px, 4vw, 40px);
+  font-family: "Playfair Display", Georgia, serif;
+  letter-spacing: 0.02em;
 }
 
 .app-header p {
@@ -60,9 +64,9 @@ body {
   padding: 7px 12px;
   font-size: 13px;
   font-weight: 700;
-  background: #fff8d8;
-  color: #8d6700;
-  border: 1px solid #f0db87;
+  background: #ffe9f7;
+  color: #a24175;
+  border: 1px solid #f7b6d6;
   white-space: nowrap;
 }
 
@@ -96,16 +100,16 @@ input,
 select,
 button {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 10px 11px;
   font-size: 14px;
   min-height: 40px;
 }
 
 button {
-  background: var(--primary);
+  background: linear-gradient(135deg, #ff7ebe, var(--primary));
   color: #fff;
-  border: 1px solid var(--primary);
+  border: 1px solid #ff8fc7;
   cursor: pointer;
   font-weight: 600;
 }
@@ -122,6 +126,12 @@ button:hover {
 
 h2 {
   margin-top: 0;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(22px, 3vw, 30px);
+}
+
+h3 {
+  font-family: "Playfair Display", Georgia, serif;
 }
 
 .form-row {
@@ -147,9 +157,9 @@ h2 {
   display: flex;
   justify-content: space-between;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 10px;
-  background: #fcfdff;
+  background: #fff8fd;
 }
 
 .bar-chart {
@@ -178,7 +188,7 @@ h2 {
 
 .bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #37a1ff, #0f6ccf);
+  background: linear-gradient(90deg, #ff8fca, #ff5ead);
 }
 
 .table-wrap {
@@ -212,10 +222,10 @@ th {
 .ai-summary {
   min-height: 40px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 8px;
   line-height: 1.4;
-  background: #f8fbff;
+  background: #fff6fc;
 }
 
 .fixed-grid {
@@ -244,9 +254,17 @@ th {
 
 .forecast-cards div {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 8px;
   background: var(--primary-soft);
+}
+
+.main-layer {
+  background: linear-gradient(180deg, #fff7fc 0%, #ffeef8 100%);
+}
+
+.sub-layer {
+  border-top: 5px solid #ffc0df;
 }
 
 .forecast-cards strong {
