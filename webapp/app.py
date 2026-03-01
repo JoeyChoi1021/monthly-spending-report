@@ -886,7 +886,7 @@ class SpendHandler(BaseHTTPRequestHandler):
                 ]
                 escaped = []
                 for field in fields:
-                    escaped.append(f'"{field.replace("\"", "\"\"")}"')
+                    escaped.append('"' + field.replace('"', '""') + '"')
                 lines.append(",".join(escaped))
 
             data = "\n".join(lines).encode("utf-8")
