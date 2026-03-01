@@ -59,6 +59,15 @@ const els = {
   liveStatusPill: document.getElementById("liveStatusPill"),
   lastSyncText: document.getElementById("lastSyncText"),
 };
+const chapterLinks = Array.from(document.querySelectorAll("[data-chapter]"));
+const chapterSectionIds = [
+  "main-summary",
+  "add-layer",
+  "ai-layer",
+  "template-layer",
+  "forecast-layer",
+  "history-layer",
+];
 
 const url = new URL(window.location.href);
 let state = {
@@ -563,6 +572,49 @@ function exportCsv() {
   window.location.href = buildApiUrl("/api/export.csv").toString();
 }
 
+function setActiveChapter(sectionId) {
+  chapterLinks.forEach((link) => {
+    const isActive = link.getAttribute("href") === `#${sectionId}`;
+    link.classList.toggle("is-active", isActive);
+  });
+}
+
+function initChapterTracking() {
+  if (!chapterLinks.length) return;
+
+  chapterLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const targetId = (link.getAttribute("href") || "").replace("#", "");
+      if (targetId) setActiveChapter(targetId);
+    });
+  });
+
+  const sections = chapterSectionIds
+    .map((id) => document.getElementById(id))
+    .filter((section) => Boolean(section));
+
+  if (!sections.length || !("IntersectionObserver" in window)) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible && visible.target && visible.target.id) {
+        setActiveChapter(visible.target.id);
+      }
+    },
+    {
+      root: null,
+      rootMargin: "-25% 0px -50% 0px",
+      threshold: [0.2, 0.35, 0.6],
+    }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+  setActiveChapter("main-summary");
+}
+
 async function updateMonth(nextMonth) {
   state.month = nextMonth;
   els.monthInput.value = state.month;
@@ -582,6 +634,7 @@ function init() {
   renderFixedTemplateInputs();
   Promise.all([refreshAll(), loadTemplate()]).catch((err) => showTemplateStatus(err.message, true));
   startLiveSync();
+  initChapterTracking();
 
   els.typeInput.addEventListener("change", setCategories);
   els.categoryInput.addEventListener("change", syncSubcategoryUI);

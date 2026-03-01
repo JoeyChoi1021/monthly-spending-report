@@ -134,10 +134,77 @@ a {
   border-radius: 12px;
   padding: 12px;
   font-weight: 600;
+  display: grid;
+  gap: 4px;
 }
 
 .chapter-card:hover {
   background: #f7f8fd;
+}
+
+.chapter-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chapter-card strong {
+  font-size: 17px;
+}
+
+.chapter-card small {
+  color: #4f5561;
+  font-size: 13px;
+}
+
+.chapter-card.is-active {
+  border-color: #171c25;
+  background: #f1f4f9;
+}
+
+.chapter-rail {
+  position: sticky;
+  top: 8px;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+  background: rgba(248, 248, 251, 0.92);
+}
+
+.chapter-rail-label {
+  margin: 0 0 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b5260;
+  font-weight: 700;
+}
+
+.chapter-rail-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chapter-pill {
+  text-decoration: none;
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chapter-pill:hover {
+  background: #f4f6fb;
+}
+
+.chapter-pill.is-active {
+  background: #161c26;
+  border-color: #161c26;
+  color: #fff;
 }
 
 .panel {
@@ -439,6 +506,10 @@ th {
     grid-template-columns: 1fr 1fr;
   }
 
+  .chapter-rail {
+    top: 4px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
@@ -488,6 +559,11 @@ th {
 
   .chapter-grid {
     grid-template-columns: 1fr;
+  }
+
+  .chapter-rail-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .fixed-grid,

@@ -12,17 +12,17 @@
         <nav class="landing-nav">
           <div class="brand">Aetherfield</div>
           <div class="nav-links">
-            <a href="#chapters">Product</a>
-            <a href="#history-layer">Journal</a>
-            <a href="#template-layer">About</a>
-            <a href="#forecast-layer">Careers</a>
+            <a href="#chapters">Chapters</a>
+            <a href="#main-summary">Dashboard</a>
+            <a href="#add-layer">Add Expense</a>
+            <a href="#history-layer">History</a>
             <a href="#main-summary" class="get-started">Get started -></a>
           </div>
         </nav>
 
         <div class="hero-copy">
-          <h2>Sustainability insights,<br />built for business</h2>
-          <p>Track impact, reduce emissions, and accelerate progress with clarity and confidence.</p>
+          <h2>Shared spending clarity,<br />chapter by chapter</h2>
+          <p>Move from summary to action fast, with one room, one month, and live sync for everyone.</p>
         </div>
 
         <div class="hero-cta">
@@ -36,12 +36,48 @@
       <section class="panel chapter-layer" id="chapters">
         <h2>Layers & Chapters</h2>
         <div class="chapter-grid">
-          <a class="chapter-card" href="#main-summary">Chapter 1: Monthly Summary</a>
-          <a class="chapter-card" href="#add-layer">Chapter 2: Add Expense</a>
-          <a class="chapter-card" href="#ai-layer">Chapter 3: AI Summary</a>
-          <a class="chapter-card" href="#template-layer">Chapter 4: Fixed Template</a>
-          <a class="chapter-card" href="#forecast-layer">Chapter 5: Forecast</a>
-          <a class="chapter-card" href="#history-layer">Chapter 6: Expense History</a>
+          <a class="chapter-card" data-chapter href="#main-summary">
+            <span>Chapter 1</span>
+            <strong>Monthly Summary</strong>
+            <small>KPI totals and category bars</small>
+          </a>
+          <a class="chapter-card" data-chapter href="#add-layer">
+            <span>Chapter 2</span>
+            <strong>Add Expense</strong>
+            <small>Capture new fixed and non-fixed spending</small>
+          </a>
+          <a class="chapter-card" data-chapter href="#ai-layer">
+            <span>Chapter 3</span>
+            <strong>AI Summary</strong>
+            <small>Generate monthly insight narrative</small>
+          </a>
+          <a class="chapter-card" data-chapter href="#template-layer">
+            <span>Chapter 4</span>
+            <strong>Fixed Template</strong>
+            <small>Save recurring fixed spend once</small>
+          </a>
+          <a class="chapter-card" data-chapter href="#forecast-layer">
+            <span>Chapter 5</span>
+            <strong>Forecast</strong>
+            <small>See next-month outlook and patterns</small>
+          </a>
+          <a class="chapter-card" data-chapter href="#history-layer">
+            <span>Chapter 6</span>
+            <strong>Expense History</strong>
+            <small>Audit entries and remove mistakes</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="panel chapter-rail">
+        <p class="chapter-rail-label">Quick chapter jump</p>
+        <div class="chapter-rail-links">
+          <a class="chapter-pill is-active" data-chapter href="#main-summary">1. Summary</a>
+          <a class="chapter-pill" data-chapter href="#add-layer">2. Add</a>
+          <a class="chapter-pill" data-chapter href="#ai-layer">3. AI</a>
+          <a class="chapter-pill" data-chapter href="#template-layer">4. Template</a>
+          <a class="chapter-pill" data-chapter href="#forecast-layer">5. Forecast</a>
+          <a class="chapter-pill" data-chapter href="#history-layer">6. History</a>
         </div>
       </section>
 
@@ -49,7 +85,7 @@
         <div class="header-top">
           <div>
             <h1>Shared Spend Tracker</h1>
-            <p>Princess edition with live shared updates.</p>
+            <p>Layered dashboard with live shared updates.</p>
           </div>
           <div id="liveStatusPill" class="live-pill">Live sync: connecting...</div>
         </div>
@@ -74,8 +110,8 @@
 
       <section class="panel main-layer" id="main-summary">
         <div class="main-head">
-          <h2>Good morning, Princess Team</h2>
-          <p>Your monthly spending metrics are ready to review.</p>
+          <h2>Chapter 1: Monthly Summary</h2>
+          <p>Start here for total monthly spend and where money is going by category.</p>
         </div>
 
         <div class="totals kpi-row">
@@ -106,7 +142,7 @@
 
       <section class="grid">
         <article class="panel sub-layer" id="add-layer">
-          <h2>Sub Layer: Add Expense</h2>
+          <h2>Chapter 2: Add Expense</h2>
           <form id="expenseForm">
             <div class="form-row">
               <label>
@@ -165,7 +201,7 @@
         </article>
 
         <article class="panel sub-layer" id="ai-layer">
-          <h2>Sub Layer: AI Summary</h2>
+          <h2>Chapter 3: AI Summary</h2>
           <button id="aiSummaryBtn" type="button">Generate AI Summary</button>
           <p id="aiStatus" class="status"></p>
           <p id="aiSummaryText" class="ai-summary"></p>
@@ -173,7 +209,7 @@
       </section>
 
       <section class="panel sub-layer" id="template-layer">
-        <h2>Sub Layer: Fixed Expense Template</h2>
+        <h2>Chapter 4: Fixed Expense Template</h2>
         <p class="status">Enter monthly fixed amounts once, then apply each month.</p>
         <div id="fixedTemplateGrid" class="fixed-grid"></div>
         <div class="template-actions">
@@ -184,7 +220,7 @@
       </section>
 
       <section class="panel sub-layer" id="forecast-layer">
-        <h2>Sub Layer: Forecast And Pattern Analysis</h2>
+        <h2>Chapter 5: Forecast And Pattern Analysis</h2>
         <button id="forecastBtn" type="button">Run Forecast</button>
         <p id="forecastStatus" class="status"></p>
         <div id="forecastCards" class="forecast-cards"></div>
@@ -193,7 +229,7 @@
       </section>
 
       <section class="panel sub-layer" id="history-layer">
-        <h2>Sub Layer: Expense History</h2>
+        <h2>Chapter 6: Expense History</h2>
         <div class="table-wrap">
           <table>
             <thead>
