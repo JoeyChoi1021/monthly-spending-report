@@ -664,7 +664,73 @@ function renderOverview() {
 
   renderBarChart();
   renderDonutChart('donut-wrap', state.expenses.filter(i => getMonth(i.date) === tm), 'cat');
+  renderFinanceInsights(monthIncome, monthSpend, monthFixed, savings);
   renderRecentTable();
+}
+
+function renderFinanceInsights(monthIncome, monthSpend, monthFixed, savings) {
+  const aiEl = document.getElementById('ai-summary-block');
+  const nextEl = document.getElementById('next-month-block');
+  if (!aiEl || !nextEl) return;
+
+  const monthExpenses = state.expenses.filter(i => getMonth(i.date) === thisMonth());
+  const categoryTotals = {};
+  monthExpenses.forEach((item) => {
+    categoryTotals[item.cat] = (categoryTotals[item.cat] || 0) + item.amount;
+  });
+  const topCategory = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+
+  const expenseByMonth = {};
+  state.expenses.forEach((item) => {
+    const m = getMonth(item.date);
+    expenseByMonth[m] = (expenseByMonth[m] || 0) + item.amount;
+  });
+  const monthKeys = Object.keys(expenseByMonth).sort();
+  const currentMonthKey = thisMonth();
+  const currentIndex = monthKeys.indexOf(currentMonthKey);
+  const previousMonthSpend = currentIndex > 0 ? expenseByMonth[monthKeys[currentIndex - 1]] : null;
+  const spendDeltaPct =
+    previousMonthSpend && previousMonthSpend > 0
+      ? ((monthSpend - previousMonthSpend) / previousMonthSpend) * 100
+      : null;
+
+  const recentVariableSpending = monthKeys
+    .slice(-3)
+    .map((m) => expenseByMonth[m])
+    .filter((v) => Number.isFinite(v));
+  const weightedVariableProjection = recentVariableSpending.length
+    ? recentVariableSpending.reduce((sum, value, idx) => sum + value * (idx + 1), 0) /
+      recentVariableSpending.reduce((sum, _value, idx) => sum + (idx + 1), 0)
+    : 0;
+  const projectedVariable = Math.round(weightedVariableProjection * 100) / 100;
+  const projectedTotalOutflow = Math.round((projectedVariable + monthFixed) * 100) / 100;
+  const projectedNet = Math.round((monthIncome - projectedTotalOutflow) * 100) / 100;
+
+  const summaryLines = [
+    `This month income is ${fmt(monthIncome)}, variable spending is ${fmt(monthSpend)}, and fixed monthly costs are ${fmt(monthFixed)}.`,
+    `Estimated net savings after all spending: ${savings >= 0 ? '+' : '-'}${fmt(Math.abs(savings))}.`,
+  ];
+  if (topCategory) {
+    summaryLines.push(`Top spending category: ${topCategory[0]} at ${fmt(topCategory[1])}.`);
+  }
+  if (spendDeltaPct !== null) {
+    const trendWord = spendDeltaPct >= 0 ? 'up' : 'down';
+    summaryLines.push(`Variable spending is ${trendWord} ${Math.abs(spendDeltaPct).toFixed(1)}% vs last month.`);
+  }
+  aiEl.textContent = summaryLines.join('\n');
+
+  const confidence =
+    recentVariableSpending.length >= 3 ? 'higher confidence' :
+    recentVariableSpending.length === 2 ? 'medium confidence' :
+    recentVariableSpending.length === 1 ? 'low confidence' : 'not enough data';
+
+  const nextLines = [
+    `Anticipated variable spending: ${fmt(projectedVariable)} (based on last ${recentVariableSpending.length || 0} month(s)).`,
+    `Anticipated total outflow (variable + fixed): ${fmt(projectedTotalOutflow)}.`,
+    `If income stays near ${fmt(monthIncome)}, anticipated next-month savings: ${projectedNet >= 0 ? '+' : '-'}${fmt(Math.abs(projectedNet))}.`,
+    `Forecast confidence: ${confidence}.`,
+  ];
+  nextEl.textContent = nextLines.join('\n');
 }
 
 function renderBarChart() {
