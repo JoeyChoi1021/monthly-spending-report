@@ -1,254 +1,658 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shared Spend Tracker</title>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <div class="app">
-      <section class="landing panel" id="top">
-        <nav class="landing-nav">
-          <div class="brand">Aetherfield</div>
-          <div class="nav-links">
-            <a href="#chapters">Chapters</a>
-            <a href="#main-summary">Dashboard</a>
-            <a href="#add-layer">Add Expense</a>
-            <a href="#history-layer">History</a>
-            <a href="#main-summary" class="get-started">Get started -></a>
-          </div>
-        </nav>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R&J — Life Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Josefin+Sans:wght@100;200;300;400;600;700&family=Tangerine:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+</head>
+<body>
 
-        <div class="hero-copy">
-          <h2>Shared spending clarity,<br />chapter by chapter</h2>
-          <p>Move from summary to action fast, with one room, one month, and live sync for everyone.</p>
-        </div>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
-        <div class="hero-cta">
-          <a class="cta-btn" href="#add-layer">Request a demo</a>
-          <a class="cta-btn" href="#main-summary">Explore the platform</a>
-        </div>
+<!-- FRONT PAGE -->
+<div class="front-page" id="front-page" onclick="showHub()">
+  <div class="fp-strip-top"></div>
+  <div class="fp-strip-bot"></div>
+  <div class="fp-corner tl"></div><div class="fp-corner tr"></div>
+  <div class="fp-corner bl"></div><div class="fp-corner br"></div>
+  <div class="fp-names">R&amp;J</div>
+  <div class="fp-ornament">
+    <div class="fp-line"></div>
+    <div class="fp-diamond">✦ ✦ ✦</div>
+    <div class="fp-line"></div>
+  </div>
+  <div class="fp-sub">2025 — 2026</div>
+  <div class="fp-cta">Click anywhere to begin</div>
+  <div class="fp-year">Est. 2025</div>
+</div>
 
-        <div class="hero-frame" aria-hidden="true"></div>
-      </section>
+<!-- PIN SCREEN -->
+<div class="pin-screen" id="pin-screen">
+  <div class="pin-screen-title">R&amp;J · Life Planner</div>
 
-      <section class="panel chapter-layer" id="chapters">
-        <h2>Layers & Chapters</h2>
-        <div class="chapter-grid">
-          <a class="chapter-card" data-chapter href="#main-summary">
-            <span>Chapter 1</span>
-            <strong>Monthly Summary</strong>
-            <small>KPI totals and category bars</small>
-          </a>
-          <a class="chapter-card" data-chapter href="#add-layer">
-            <span>Chapter 2</span>
-            <strong>Add Expense</strong>
-            <small>Capture new fixed and non-fixed spending</small>
-          </a>
-          <a class="chapter-card" data-chapter href="#ai-layer">
-            <span>Chapter 3</span>
-            <strong>AI Summary</strong>
-            <small>Generate monthly insight narrative</small>
-          </a>
-          <a class="chapter-card" data-chapter href="#template-layer">
-            <span>Chapter 4</span>
-            <strong>Fixed Template</strong>
-            <small>Save recurring fixed spend once</small>
-          </a>
-          <a class="chapter-card" data-chapter href="#forecast-layer">
-            <span>Chapter 5</span>
-            <strong>Forecast</strong>
-            <small>See next-month outlook and patterns</small>
-          </a>
-          <a class="chapter-card" data-chapter href="#history-layer">
-            <span>Chapter 6</span>
-            <strong>Expense History</strong>
-            <small>Audit entries and remove mistakes</small>
-          </a>
-        </div>
-      </section>
+  <!-- LOGIN VIEW -->
+  <div id="pin-login-view">
+    <div class="pin-entry">
+      <div class="pin-label">Username</div>
+      <input id="login-username" type="text" placeholder="Enter username" maxlength="20" autocomplete="off"
+        style="background:rgba(201,144,154,0.08);border:1px solid rgba(201,144,154,0.2);border-radius:8px;padding:10px 14px;color:rgba(240,224,208,0.9);font-family:'Josefin Sans',sans-serif;font-size:0.78rem;letter-spacing:2px;outline:none;text-align:center;width:220px;margin-bottom:20px;">
 
-      <section class="panel chapter-rail">
-        <p class="chapter-rail-label">Quick chapter jump</p>
-        <div class="chapter-rail-links">
-          <a class="chapter-pill is-active" data-chapter href="#main-summary">1. Summary</a>
-          <a class="chapter-pill" data-chapter href="#add-layer">2. Add</a>
-          <a class="chapter-pill" data-chapter href="#ai-layer">3. AI</a>
-          <a class="chapter-pill" data-chapter href="#template-layer">4. Template</a>
-          <a class="chapter-pill" data-chapter href="#forecast-layer">5. Forecast</a>
-          <a class="chapter-pill" data-chapter href="#history-layer">6. History</a>
-        </div>
-      </section>
+      <div class="pin-label">PIN</div>
+      <div class="pin-dots" id="pin-dots" style="margin-top:10px;">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
 
-      <header class="app-header panel">
-        <div class="header-top">
-          <div>
-            <h1>Shared Spend Tracker</h1>
-            <p>Layered dashboard with live shared updates.</p>
-          </div>
-          <div id="liveStatusPill" class="live-pill">Live sync: connecting...</div>
-        </div>
+      <div class="pin-error-msg" id="pin-error"></div>
 
-        <div class="top-controls">
-          <label>
-            Shared Room
-            <input id="roomInput" type="text" maxlength="50" placeholder="home" />
-          </label>
-          <button id="saveRoomBtn" type="button">Apply Room</button>
+      <div class="pin-keypad">
+        <div class="pin-key" onclick="pinKey('1')">1</div>
+        <div class="pin-key" onclick="pinKey('2')">2</div>
+        <div class="pin-key" onclick="pinKey('3')">3</div>
+        <div class="pin-key" onclick="pinKey('4')">4</div>
+        <div class="pin-key" onclick="pinKey('5')">5</div>
+        <div class="pin-key" onclick="pinKey('6')">6</div>
+        <div class="pin-key" onclick="pinKey('7')">7</div>
+        <div class="pin-key" onclick="pinKey('8')">8</div>
+        <div class="pin-key" onclick="pinKey('9')">9</div>
+        <div class="pin-key empty"></div>
+        <div class="pin-key" onclick="pinKey('0')">0</div>
+        <div class="pin-key delete" onclick="pinDelete()">⌫</div>
+      </div>
 
-          <button id="prevMonthBtn" type="button">Prev Month</button>
-          <label>
-            Month
-            <input id="monthInput" type="month" />
-          </label>
-          <button id="nextMonthBtn" type="button">Next Month</button>
-
-          <button id="exportCsvBtn" type="button">Export CSV</button>
-        </div>
-      </header>
-
-      <section class="panel main-layer" id="main-summary">
-        <div class="main-head">
-          <h2>Chapter 1: Monthly Summary</h2>
-          <p>Start here for total monthly spend and where money is going by category.</p>
-        </div>
-
-        <div class="totals kpi-row">
-          <div class="kpi-card">
-            <span>Fixed Expense</span>
-            <strong id="fixedTotal">$0.00</strong>
-          </div>
-          <div class="kpi-card">
-            <span>Non-Fixed Expense</span>
-            <strong id="nonFixedTotal">$0.00</strong>
-          </div>
-          <div class="kpi-card kpi-highlight">
-            <span>Total Monthly Spend</span>
-            <strong id="grandTotal">$0.00</strong>
-          </div>
-        </div>
-        <p id="lastSyncText" class="status">Waiting for data...</p>
-
-        <div class="chart-shell">
-          <h3>Spend by Category</h3>
-          <div id="barChart" class="bar-chart"></div>
-          <div class="template-actions">
-            <button id="toggleUtilityBtn" type="button">Show Utility Breakdown</button>
-          </div>
-          <div id="utilityBreakdown" class="bar-chart hidden"></div>
-        </div>
-      </section>
-
-      <section class="grid">
-        <article class="panel sub-layer" id="add-layer">
-          <h2>Chapter 2: Add Expense</h2>
-          <form id="expenseForm">
-            <div class="form-row">
-              <label>
-                Date
-                <input id="dateInput" name="date" type="date" required />
-              </label>
-              <label>
-                Amount
-                <input id="amountInput" name="amount" type="number" min="0" step="0.01" required />
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>
-                Expense Type
-                <select id="typeInput" name="expense_type" required>
-                  <option value="Fixed Expense">Fixed Expense</option>
-                  <option value="Non-Fixed Expense">Non-Fixed Expense</option>
-                </select>
-              </label>
-              <label>
-                Category
-                <select id="categoryInput" name="category" required></select>
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>
-                Utility Subcategory
-                <select id="subcategoryInput" name="subcategory" disabled>
-                  <option value="">Select utility subcategory</option>
-                  <option value="Water">Water</option>
-                  <option value="Electric">Electric</option>
-                  <option value="Preston Service Fee">Preston Service Fee</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>
-                Payment Method
-                <input id="paymentMethodInput" name="payment_method" type="text" placeholder="Card / Cash / Bank" />
-              </label>
-              <label>
-                Note
-                <input id="noteInput" name="note" type="text" maxlength="300" placeholder="Optional note" />
-              </label>
-            </div>
-
-            <div class="template-actions">
-              <button type="submit">Add Record</button>
-              <button id="undoLastBtn" type="button" class="delete-btn" disabled>Undo Last Add</button>
-            </div>
-          </form>
-          <p id="formStatus" class="status"></p>
-        </article>
-
-        <article class="panel sub-layer" id="ai-layer">
-          <h2>Chapter 3: AI Summary</h2>
-          <button id="aiSummaryBtn" type="button">Generate AI Summary</button>
-          <p id="aiStatus" class="status"></p>
-          <p id="aiSummaryText" class="ai-summary"></p>
-        </article>
-      </section>
-
-      <section class="panel sub-layer" id="template-layer">
-        <h2>Chapter 4: Fixed Expense Template</h2>
-        <p class="status">Enter monthly fixed amounts once, then apply each month.</p>
-        <div id="fixedTemplateGrid" class="fixed-grid"></div>
-        <div class="template-actions">
-          <button id="saveTemplateBtn" type="button">Save Template</button>
-          <button id="applyTemplateBtn" type="button">Apply Template To Current Month</button>
-        </div>
-        <p id="templateStatus" class="status"></p>
-      </section>
-
-      <section class="panel sub-layer" id="forecast-layer">
-        <h2>Chapter 5: Forecast And Pattern Analysis</h2>
-        <button id="forecastBtn" type="button">Run Forecast</button>
-        <p id="forecastStatus" class="status"></p>
-        <div id="forecastCards" class="forecast-cards"></div>
-        <h3>Predicted Category Spend (Next Month)</h3>
-        <div id="forecastCategories" class="bar-chart"></div>
-      </section>
-
-      <section class="panel sub-layer" id="history-layer">
-        <h2>Chapter 6: Expense History</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Payment</th>
-                <th>Note</th>
-                <th>Added At</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="entriesBody"></tbody>
-          </table>
-        </div>
-      </section>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:8px;">
+        <button class="pin-back" onclick="showCreateAccount()">Create account</button>
+        <button class="pin-back" onclick="backToFront()">← Back</button>
+      </div>
     </div>
-    <script src="/app.js"></script>
-  </body>
+  </div>
+
+  <!-- CREATE ACCOUNT VIEW -->
+  <div id="pin-create-view" style="display:none;">
+    <div class="pin-entry">
+      <div class="pin-label">Choose a username</div>
+      <input id="reg-username" type="text" placeholder="Username" maxlength="20" autocomplete="off"
+        style="background:rgba(201,144,154,0.08);border:1px solid rgba(201,144,154,0.2);border-radius:8px;padding:10px 14px;color:rgba(240,224,208,0.9);font-family:'Josefin Sans',sans-serif;font-size:0.78rem;letter-spacing:2px;outline:none;text-align:center;width:220px;margin-bottom:20px;">
+
+      <div class="pin-label">Choose a 4-digit PIN</div>
+      <div class="pin-dots" id="reg-dots" style="margin-top:10px;">
+        <div class="pin-dot" id="rdot-0"></div>
+        <div class="pin-dot" id="rdot-1"></div>
+        <div class="pin-dot" id="rdot-2"></div>
+        <div class="pin-dot" id="rdot-3"></div>
+      </div>
+
+      <div class="pin-error-msg" id="reg-error"></div>
+
+      <div class="pin-keypad">
+        <div class="pin-key" onclick="regKey('1')">1</div>
+        <div class="pin-key" onclick="regKey('2')">2</div>
+        <div class="pin-key" onclick="regKey('3')">3</div>
+        <div class="pin-key" onclick="regKey('4')">4</div>
+        <div class="pin-key" onclick="regKey('5')">5</div>
+        <div class="pin-key" onclick="regKey('6')">6</div>
+        <div class="pin-key" onclick="regKey('7')">7</div>
+        <div class="pin-key" onclick="regKey('8')">8</div>
+        <div class="pin-key" onclick="regKey('9')">9</div>
+        <div class="pin-key empty"></div>
+        <div class="pin-key" onclick="regKey('0')">0</div>
+        <div class="pin-key delete" onclick="regDelete()">⌫</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:8px;">
+        <button class="pin-back" onclick="showLoginView()">← Back to login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HUB PAGE -->
+<div class="hub-page hidden" id="hub-page">
+  <div class="hub-header">
+    <div class="hub-names">Joey &amp; Renee</div>
+    <div class="hub-sub">Life Planner · 2025 — 2026</div>
+  </div>
+
+  <div class="hub-section-lbl">choose your section</div>
+
+  <div class="hub-grid">
+    <!-- Finance -->
+    <div class="hub-card" onclick="enterSection('overview')">
+      <div class="hub-card-banner" style="background:#1a1228;">
+        <svg viewBox="0 0 200 330" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;">
+          <rect width="200" height="330" fill="#1a1228"/>
+          <rect y="190" width="200" height="140" fill="#110d1e"/>
+          <circle cx="155" cy="52" r="26" fill="#f8d870"/><circle cx="164" cy="43" r="21" fill="#1a1228"/>
+          <circle cx="18" cy="20" r="1.2" fill="#f8d870" opacity="0.7"/><circle cx="70" cy="10" r="1" fill="#f8d870" opacity="0.5"/><circle cx="110" cy="28" r="1.2" fill="#f8d870" opacity="0.6"/><circle cx="45" cy="50" r="0.8" fill="#f8d870" opacity="0.4"/>
+          <rect x="0" y="108" width="28" height="222" fill="#2a2060"/><rect x="22" y="90" width="22" height="240" fill="#1e1848"/>
+          <rect x="155" y="96" width="26" height="234" fill="#2a2060"/><rect x="174" y="82" width="26" height="248" fill="#1e1848"/>
+          <rect x="4" y="120" width="5" height="6" fill="#f8d870" opacity="0.6"/><rect x="13" y="120" width="5" height="6" fill="#f8d870" opacity="0.3"/>
+          <rect x="4" y="136" width="5" height="6" fill="#f8d870" opacity="0.5"/><rect x="13" y="136" width="5" height="6" fill="#f8d870" opacity="0.7"/>
+          <rect x="56" y="120" width="88" height="210" fill="#c89a60"/>
+          <polygon points="48,124 100,94 152,124" fill="#b08850"/>
+          <rect x="62" y="134" width="9" height="110" fill="#d8aa70"/><rect x="78" y="134" width="9" height="110" fill="#d8aa70"/><rect x="94" y="134" width="9" height="110" fill="#d8aa70"/><rect x="110" y="134" width="9" height="110" fill="#d8aa70"/><rect x="126" y="134" width="9" height="110" fill="#d8aa70"/>
+          <rect x="78" y="162" width="12" height="16" fill="#f8d870" opacity="0.9"/><rect x="98" y="162" width="12" height="16" fill="#f8d870" opacity="0.6"/><rect x="118" y="162" width="12" height="16" fill="#f8d870" opacity="0.8"/>
+          <rect x="78" y="196" width="12" height="16" fill="#f8d870" opacity="0.5"/><rect x="98" y="196" width="12" height="16" fill="#f8d870" opacity="0.9"/><rect x="118" y="196" width="12" height="16" fill="#f8d870" opacity="0.7"/>
+          <rect x="78" y="230" width="12" height="16" fill="#f8d870" opacity="0.8"/><rect x="98" y="230" width="12" height="16" fill="#f8d870" opacity="0.4"/><rect x="118" y="230" width="12" height="16" fill="#f8d870" opacity="0.9"/>
+          <rect x="87" y="280" width="26" height="50" rx="13" fill="#7a4820"/>
+          <rect x="0" y="292" width="200" height="38" fill="#0e0918" opacity="0.88"/>
+        </svg>
+        <span class="hub-card-lbl">Finance</span>
+      </div>
+      <div class="hub-card-body"><div class="hub-card-desc">Income · Spending · Bills · Budget</div></div>
+    </div>
+
+    <!-- Portfolio -->
+    <div class="hub-card" onclick="enterSection('investments')">
+      <div class="hub-card-banner" style="background:#061620;">
+        <svg viewBox="0 0 200 330" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;">
+          <rect width="200" height="330" fill="#061620"/>
+          <ellipse cx="100" cy="75" rx="88" ry="55" fill="#0a5248" opacity="0.3"/>
+          <circle cx="18" cy="16" r="1.2" fill="white" opacity="0.6"/><circle cx="55" cy="7" r="1" fill="white" opacity="0.4"/><circle cx="140" cy="14" r="1.2" fill="white" opacity="0.6"/><circle cx="185" cy="26" r="1" fill="white" opacity="0.4"/>
+          <rect x="0" y="118" width="24" height="212" fill="#0c3858"/><rect x="18" y="98" width="20" height="232" fill="#082a44"/>
+          <rect x="158" y="112" width="22" height="218" fill="#0c3858"/><rect x="175" y="90" width="25" height="240" fill="#082a44"/>
+          <rect x="3" y="130" width="5" height="5" fill="#f8d870" opacity="0.6"/><rect x="11" y="130" width="5" height="5" fill="#f8d870" opacity="0.3"/>
+          <rect x="3" y="146" width="5" height="5" fill="#f8d870" opacity="0.5"/><rect x="11" y="146" width="5" height="5" fill="#f8d870" opacity="0.8"/>
+          <rect x="163" y="124" width="5" height="5" fill="#f8d870" opacity="0.7"/><rect x="171" y="124" width="5" height="5" fill="#f8d870" opacity="0.4"/>
+          <rect x="69" y="78" width="62" height="252" fill="#185878"/>
+          <polygon points="100,32 88,78 112,78" fill="#2a8aaa"/>
+          <rect x="76" y="94" width="9" height="11" fill="#f8d870" opacity="0.9"/><rect x="92" y="94" width="9" height="11" fill="#f8d870" opacity="0.6"/><rect x="108" y="94" width="9" height="11" fill="#f8d870" opacity="0.9"/>
+          <rect x="76" y="116" width="9" height="11" fill="#f8d870" opacity="0.5"/><rect x="92" y="116" width="9" height="11" fill="#f8d870" opacity="0.9"/><rect x="108" y="116" width="9" height="11" fill="#f8d870" opacity="0.4"/>
+          <rect x="76" y="138" width="9" height="11" fill="#f8d870" opacity="0.8"/><rect x="92" y="138" width="9" height="11" fill="#f8d870" opacity="0.4"/><rect x="108" y="138" width="9" height="11" fill="#f8d870" opacity="0.9"/>
+          <rect x="76" y="160" width="9" height="11" fill="#f8d870" opacity="0.6"/><rect x="92" y="160" width="9" height="11" fill="#f8d870" opacity="0.9"/><rect x="108" y="160" width="9" height="11" fill="#f8d870" opacity="0.5"/>
+          <rect x="0" y="262" width="200" height="30" fill="#04101a"/>
+          <polyline points="12,252 46,232 80,242 120,214 166,188" stroke="#42e880" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+          <polygon points="166,188 158,200 170,200" fill="#42e880" opacity="0.85"/>
+          <rect x="0" y="292" width="200" height="38" fill="#040e18" opacity="0.92"/>
+        </svg>
+        <span class="hub-card-lbl">Portfolio</span>
+      </div>
+      <div class="hub-card-body"><div class="hub-card-desc">Stocks · ETFs · Crypto · Gains</div></div>
+    </div>
+
+    <!-- Travel -->
+    <div class="hub-card" onclick="enterSection('travel')">
+      <div class="hub-card-banner" style="background:#70c0e0;">
+        <svg viewBox="0 0 200 330" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;">
+          <rect width="200" height="330" fill="#70c0e0"/>
+          <ellipse cx="50" cy="100" rx="70" ry="62" fill="#3a7838"/><ellipse cx="155" cy="90" rx="60" ry="55" fill="#2c5c2c"/><ellipse cx="100" cy="96" rx="52" ry="46" fill="#489048"/>
+          <rect x="80" y="58" width="4" height="40" fill="#5a3818"/><ellipse cx="82" cy="52" rx="14" ry="10" fill="#388828"/><ellipse cx="75" cy="58" rx="10" ry="7" fill="#489838"/>
+          <rect x="0" y="128" width="28" height="202" fill="#e07838"/><rect x="26" y="114" width="24" height="216" fill="#e8c030"/>
+          <rect x="6" y="140" width="7" height="10" fill="#5a3820"/><rect x="17" y="140" width="7" height="10" fill="#5a3820"/>
+          <rect x="6" y="160" width="7" height="10" fill="#5a3820"/><rect x="17" y="160" width="7" height="10" fill="#5a3820"/>
+          <rect x="30" y="128" width="7" height="10" fill="#3a5888"/><rect x="42" y="128" width="7" height="10" fill="#3a5888"/>
+          <rect x="50" y="106" width="28" height="224" fill="#78c8e8"/>
+          <rect x="54" y="118" width="8" height="11" fill="#2a4868"/><rect x="67" y="118" width="8" height="11" fill="#2a4868"/>
+          <rect x="100" y="114" width="29" height="216" fill="#e89898"/>
+          <rect x="104" y="126" width="8" height="11" fill="#3a5888"/><rect x="117" y="126" width="8" height="11" fill="#3a5888"/>
+          <rect x="128" y="118" width="29" height="212" fill="#e86030"/>
+          <rect x="132" y="130" width="8" height="12" fill="#5a3820"/><rect x="145" y="130" width="8" height="12" fill="#5a3820"/>
+          <rect x="158" y="96" width="42" height="234" fill="#f0f0e8"/>
+          <polygon points="158,96 179,72 200,96" fill="#e0e0d8"/>
+          <rect x="158" y="96" width="42" height="22" fill="#3a2818"/>
+          <rect x="165" y="100" width="7" height="12" fill="#88b0c8" opacity="0.7"/><rect x="182" y="100" width="7" height="12" fill="#88b0c8" opacity="0.7"/>
+          <path d="M0,196 Q10,202 20,196 Q30,202 40,196 Q50,202 60,196 Q70,202 80,196 Q90,202 100,196 Q110,202 120,196 Q130,202 140,196 Q150,202 160,196 Q170,202 180,196 Q190,202 200,196" fill="#c02828"/>
+          <rect x="0" y="208" width="200" height="40" fill="#e0c888"/>
+          <rect x="0" y="242" width="200" height="50" fill="#38b0e0"/>
+          <rect x="0" y="292" width="200" height="38" fill="#184878" opacity="0.9"/>
+        </svg>
+        <span class="hub-card-lbl">Travel</span>
+      </div>
+      <div class="hub-card-body"><div class="hub-card-desc">Dream Trips · Bookings · Adventures</div></div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="hub-card" onclick="enterSection('calendar')">
+      <div class="hub-card-banner" style="background:#e07808;">
+        <svg viewBox="0 0 200 330" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;">
+          <rect width="200" height="330" fill="#e07808"/>
+          <rect width="200" height="88" fill="#b85806"/>
+          <circle cx="100" cy="56" r="36" fill="#f8c828"/><circle cx="100" cy="56" r="24" fill="#fce048"/>
+          <polygon points="88,46 100,10 112,46" fill="#281808" opacity="0.9"/>
+          <rect x="95" y="46" width="10" height="30" fill="#281808" opacity="0.9"/>
+          <polygon points="82,78 100,46 118,78" fill="#281808" opacity="0.9"/>
+          <rect x="90" y="78" width="20" height="16" fill="#281808" opacity="0.9"/>
+          <polygon points="74,96 100,78 126,96" fill="#281808" opacity="0.9"/>
+          <rect x="84" y="96" width="32" height="12" fill="#281808" opacity="0.9"/>
+          <rect x="0" y="126" width="34" height="204" fill="#c88848"/>
+          <polygon points="0,126 17,108 34,126" fill="#a86828"/>
+          <rect x="0" y="108" width="34" height="20" fill="#3a2818"/>
+          <rect x="4" y="142" width="9" height="14" fill="#7a5028" opacity="0.8"/><rect x="19" y="142" width="9" height="14" fill="#7a5028" opacity="0.8"/>
+          <rect x="4" y="168" width="9" height="14" fill="#7a5028" opacity="0.8"/><rect x="19" y="168" width="9" height="14" fill="#7a5028" opacity="0.8"/>
+          <rect x="32" y="116" width="38" height="214" fill="#d0a058"/>
+          <polygon points="32,116 51,96 70,116" fill="#b88038"/>
+          <rect x="40" y="132" width="9" height="13" fill="#7a5028" opacity="0.8"/><rect x="55" y="132" width="9" height="13" fill="#7a5028" opacity="0.8"/>
+          <rect x="40" y="158" width="9" height="13" fill="#7a5028" opacity="0.8"/><rect x="55" y="158" width="9" height="13" fill="#7a5028" opacity="0.8"/>
+          <rect x="68" y="130" width="64" height="200" fill="#c88848"/>
+          <polygon points="68,130 100,108 132,130" fill="#a86828"/>
+          <rect x="68" y="108" width="64" height="24" fill="#3a2818"/>
+          <rect x="76" y="112" width="9" height="14" fill="#88b0c8" opacity="0.7"/><rect x="113" y="112" width="9" height="14" fill="#88b0c8" opacity="0.7"/>
+          <rect x="76" y="152" width="10" height="14" fill="#7a5028" opacity="0.8"/><rect x="100" y="152" width="10" height="14" fill="#7a5028" opacity="0.8"/>
+          <rect x="130" y="120" width="36" height="210" fill="#d0a058"/>
+          <polygon points="130,120 148,100 166,120" fill="#b88038"/>
+          <rect x="164" y="110" width="36" height="220" fill="#c88848"/>
+          <rect x="0" y="292" width="200" height="38" fill="#281808" opacity="0.9"/>
+        </svg>
+        <span class="hub-card-lbl">Calendar</span>
+      </div>
+      <div class="hub-card-body"><div class="hub-card-desc">Events · Anniversaries · Date Nights</div></div>
+    </div>
+
+    <!-- Photos -->
+    <div class="hub-card" onclick="enterSection('photos')">
+      <div class="hub-card-banner" style="background:#c0e0f0;">
+        <svg viewBox="0 0 200 330" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%;">
+          <rect width="200" height="330" fill="#c0e0f0"/>
+          <rect width="200" height="82" fill="#d0eaf8"/>
+          <polygon points="38,168 100,64 162,168" fill="white"/>
+          <polygon points="62,168 100,84 138,168" fill="#e0ecf8"/>
+          <polygon points="80,168 100,98 120,168" fill="#d0e4f0"/>
+          <rect x="0" y="160" width="200" height="30" fill="#78b870"/>
+          <rect x="10" y="130" width="8" height="32" fill="#5a3818"/>
+          <ellipse cx="14" cy="124" rx="18" ry="22" fill="#c868a0"/>
+          <ellipse cx="6" cy="128" rx="12" ry="15" fill="#d888b8"/>
+          <ellipse cx="22" cy="126" rx="12" ry="15" fill="#e8a8c8"/>
+          <rect x="174" y="124" width="8" height="36" fill="#5a3818"/>
+          <ellipse cx="178" cy="118" rx="18" ry="22" fill="#c868a0"/>
+          <ellipse cx="170" cy="122" rx="12" ry="15" fill="#d888b8"/>
+          <ellipse cx="186" cy="120" rx="12" ry="15" fill="#e8a8c8"/>
+          <rect x="84" y="160" width="32" height="52" fill="#c82828"/>
+          <polygon points="76,164 100,144 124,164" fill="#a01e1e"/>
+          <polygon points="80,148 100,130 120,148" fill="#c82828"/>
+          <polygon points="84,135 100,120 116,135" fill="#a01e1e"/>
+          <rect x="91" y="188" width="7" height="24" fill="#5a3010"/><rect x="102" y="188" width="7" height="24" fill="#5a3010"/>
+          <rect x="0" y="202" width="200" height="28" fill="#88b868"/>
+          <ellipse cx="100" cy="255" rx="70" ry="22" fill="#58a8d0"/>
+          <ellipse cx="100" cy="255" rx="54" ry="15" fill="#68b8de"/>
+          <rect x="0" y="292" width="200" height="38" fill="#184870" opacity="0.9"/>
+        </svg>
+        <span class="hub-card-lbl">Photos</span>
+      </div>
+      <div class="hub-card-body"><div class="hub-card-desc">Albums · Memories · Moments</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo" onclick="goToHub()">
+    <div class="sidebar-logo-name">Joey & Renee</div>
+    <div class="sidebar-logo-sub">Life Planner</div>
+  </div>
+
+  <div class="sidebar-section-label">Finance</div>
+  <nav>
+    <div class="nav-item active" onclick="showSection('overview')"><span class="nav-icon">◈</span><span>Overview</span></div>
+    <div class="nav-item" onclick="showSection('income')"><span class="nav-icon">↑</span><span>Income</span></div>
+    <div class="nav-item" onclick="showSection('spending')"><span class="nav-icon">↓</span><span>Spending</span></div>
+    <div class="nav-item" onclick="showSection('budget')"><span class="nav-icon">◻</span><span>Budget</span></div>
+    <div class="nav-item" onclick="showSection('fixed')"><span class="nav-icon">⊟</span><span>Fixed Expenses</span></div>
+    <div class="nav-item" onclick="showSection('goals')"><span class="nav-icon">◎</span><span>Savings Goals</span></div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="showSection('investments')"><span class="nav-icon">◈</span><span>Investments</span></div>
+    <div class="nav-item" onclick="showSection('travel')"><span class="nav-icon">✈</span><span>Travel</span></div>
+    <div class="nav-item" onclick="showSection('calendar')"><span class="nav-icon">◷</span><span>Calendar</span></div>
+    <div class="nav-item" onclick="showSection('photos')"><span class="nav-icon">❋</span><span>Photo Album</span></div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="nw-chip">
+      <div class="nw-chip-label">Net Savings</div>
+      <div class="nw-chip-value" id="sidebar-savings">$0</div>
+      <div class="nw-chip-sub">This month</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-dividers">——</span>
+      <div class="page-title" id="page-title">Overview</div>
+      <span class="topbar-dividers">——</span>
+    </div>
+    <div class="topbar-actions" id="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="exportData()">Export</button>
+      <button class="btn btn-primary btn-sm" onclick="showSection('income')">+ Income</button>
+      <button class="btn btn-ghost btn-sm" onclick="showSection('spending')">+ Expense</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="section active" id="section-overview">
+      <div class="cards-row">
+        <div class="stat-card green"><div class="stat-label">Total Income</div><div class="stat-value green" id="ov-income">$0</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card red"><div class="stat-label">Daily Spending</div><div class="stat-value red" id="ov-spend">$0</div><div class="stat-sub">This month</div></div>
+        <div class="stat-card red"><div class="stat-label">Fixed Expenses</div><div class="stat-value red" id="ov-fixed">$0</div><div class="stat-sub">Recurring monthly</div></div>
+        <div class="stat-card yellow"><div class="stat-label">Net Savings</div><div class="stat-value yellow" id="ov-savings">$0</div><div class="stat-sub">After all expenses</div></div>
+        <div class="stat-card blue"><div class="stat-label">Portfolio Value</div><div class="stat-value blue" id="ov-portfolio">$0</div><div class="stat-sub">Total investments</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Monthly Overview</div><div style="display:flex;gap:10px;font-size:0.58rem;color:var(--muted);"><span style="color:var(--green);">▮ Income</span><span style="color:var(--red);">▮ Expense</span></div></div>
+          <div class="panel-body"><div class="bar-chart" id="bar-chart"><div class="empty-state" style="width:100%;padding:16px 0;font-size:0.68rem;">Add transactions to see chart</div></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Spending by Category</div></div>
+          <div class="panel-body"><div class="donut-wrap" id="donut-wrap"><div class="empty-state" style="width:100%;padding:16px 0;font-size:0.68rem;">No spending data yet</div></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Transactions</div>
+          <button class="btn btn-ghost btn-sm" onclick="showSection('spending')">View All</button>
+        </div>
+        <div class="panel-body" style="padding:0;">
+          <table class="data-table"><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+          <tbody id="recent-tbody"><tr><td colspan="4" class="empty-state">No transactions yet</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INCOME ══ -->
+    <div class="section" id="section-income">
+      <div class="cards-row">
+        <div class="stat-card green"><div class="stat-label">This Month</div><div class="stat-value green" id="inc-month">$0</div></div>
+        <div class="stat-card green"><div class="stat-label">This Year</div><div class="stat-value green" id="inc-year">$0</div></div>
+        <div class="stat-card green"><div class="stat-label">Avg Monthly</div><div class="stat-value green" id="inc-avg">$0</div></div>
+        <div class="stat-card green"><div class="stat-label">Sources</div><div class="stat-value green" id="inc-sources">0</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header"><div class="panel-title">Add Income</div></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="inc-amount" placeholder="0.00" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Category</label><select id="inc-cat"><option>Salary</option><option>Freelance</option><option>Business</option><option>Investment</option><option>Gift</option><option>Bonus</option><option>Other</option></select></div>
+            <div class="form-group"><label class="form-label">Date</label><input type="date" id="inc-date"></div>
+            <div class="form-group"><label class="form-label">Notes</label><input type="text" id="inc-notes" placeholder="Optional description..."></div>
+          </div>
+          <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addIncome()">Add Income</button></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Income History</div></div>
+        <div class="panel-body" style="padding:0;">
+          <table class="data-table"><thead><tr><th>Date</th><th>Notes</th><th>Category</th><th>Amount</th><th></th></tr></thead>
+          <tbody id="income-tbody"><tr><td colspan="5" class="empty-state">No income recorded</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SPENDING ══ -->
+    <div class="section" id="section-spending">
+      <div class="cards-row">
+        <div class="stat-card red"><div class="stat-label">This Month</div><div class="stat-value red" id="exp-month">$0</div></div>
+        <div class="stat-card red"><div class="stat-label">This Year</div><div class="stat-value red" id="exp-year">$0</div></div>
+        <div class="stat-card red"><div class="stat-label">Avg Monthly</div><div class="stat-value red" id="exp-avg">$0</div></div>
+        <div class="stat-card red"><div class="stat-label">Transactions</div><div class="stat-value red" id="exp-count">0</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header"><div class="panel-title">Add Expense</div></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="exp-amount" placeholder="0.00" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Category</label><select id="exp-cat"><option>Housing</option><option>Food</option><option>Transport</option><option>Entertainment</option><option>Healthcare</option><option>Shopping</option><option>Utilities</option><option>Education</option><option>Travel</option><option>Pets</option><option>Personal Care</option><option>Other</option></select></div>
+            <div class="form-group"><label class="form-label">Date</label><input type="date" id="exp-date"></div>
+            <div class="form-group"><label class="form-label">Notes</label><input type="text" id="exp-notes" placeholder="Optional description..."></div>
+          </div>
+          <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addExpense()">Add Expense</button></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">All Expenses</div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="search-exp" placeholder="Search..." style="width:140px;padding:6px 10px;font-size:0.68rem;" oninput="renderExpenses()">
+            <select id="filter-cat" style="width:130px;padding:6px 10px;font-size:0.68rem;" onchange="renderExpenses()">
+              <option value="">All Categories</option>
+              <option>Housing</option><option>Food</option><option>Transport</option><option>Entertainment</option><option>Healthcare</option><option>Shopping</option><option>Utilities</option><option>Education</option><option>Travel</option><option>Pets</option><option>Personal Care</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-body" style="padding:0;">
+          <table class="data-table"><thead><tr><th>Date</th><th>Notes</th><th>Category</th><th>Amount</th><th></th></tr></thead>
+          <tbody id="expense-tbody"><tr><td colspan="5" class="empty-state">No expenses recorded</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BUDGET ══ -->
+    <div class="section" id="section-budget">
+      <div class="cards-row">
+        <div class="stat-card yellow"><div class="stat-label">Total Budget</div><div class="stat-value yellow" id="bud-total">$0</div></div>
+        <div class="stat-card red"><div class="stat-label">Spent</div><div class="stat-value red" id="bud-spent">$0</div></div>
+        <div class="stat-card green"><div class="stat-label">Remaining</div><div class="stat-value green" id="bud-remaining">$0</div></div>
+        <div class="stat-card blue"><div class="stat-label">Categories</div><div class="stat-value blue" id="bud-cats">0</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header"><div class="panel-title">Set Budget Limit</div></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Category</label><select id="bud-cat"><option>Housing</option><option>Food</option><option>Transport</option><option>Entertainment</option><option>Healthcare</option><option>Shopping</option><option>Utilities</option><option>Education</option><option>Travel</option><option>Pets</option><option>Personal Care</option><option>Other</option></select></div>
+            <div class="form-group"><label class="form-label">Monthly Limit ($)</label><input type="number" id="bud-limit" placeholder="500" min="0" step="0.01"></div>
+          </div>
+          <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addBudget()">Set Budget</button></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-header"><div class="panel-title">Budget vs Actual (This Month)</div></div><div class="panel-body" id="budget-progress"><div class="empty-state"><div class="empty-icon">◻</div>No budgets set yet</div></div></div>
+    </div>
+
+    <!-- ══ FIXED EXPENSES ══ -->
+    <div class="section" id="section-fixed">
+      <div class="cards-row">
+        <div class="stat-card red"><div class="stat-label">Monthly Total</div><div class="stat-value red" id="fx-monthly">$0</div><div class="stat-sub">Active recurring</div></div>
+        <div class="stat-card red"><div class="stat-label">Annual Total</div><div class="stat-value red" id="fx-annual">$0</div><div class="stat-sub">Projected yearly</div></div>
+        <div class="stat-card yellow"><div class="stat-label">% of Income</div><div class="stat-value yellow" id="fx-pct">0%</div><div class="stat-sub">vs. this month</div></div>
+        <div class="stat-card blue"><div class="stat-label">Active Bills</div><div class="stat-value blue" id="fx-count">0</div><div class="stat-sub">Subscriptions & bills</div></div>
+      </div>
+      <div class="two-col" style="margin-bottom:20px;">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Add Fixed Expense</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label class="form-label">Name / Label</label><input type="text" id="fx-name" placeholder="e.g. Netflix, Rent..."></div>
+              <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="fx-amount" placeholder="0.00" min="0" step="0.01"></div>
+              <div class="form-group"><label class="form-label">Category</label><select id="fx-cat" onchange="updateSubcats()"><option value="Home">🏠 Home</option><option value="Car">🚗 Car</option><option value="Loans">💳 Loans</option><option value="Insurance">🛡️ Insurance</option><option value="Connectivity">📡 Connectivity</option><option value="Subscriptions">📱 Subscriptions</option></select></div>
+              <div class="form-group"><label class="form-label">Subcategory</label><select id="fx-subcat"></select></div>
+              <div class="form-group"><label class="form-label">Frequency</label><select id="fx-freq"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option><option value="annually">Annually</option></select></div>
+              <div class="form-group"><label class="form-label">Due Day (1–31)</label><input type="number" id="fx-due" placeholder="e.g. 1, 15..." min="1" max="31"></div>
+              <div class="form-group"><label class="form-label">Status</label><select id="fx-status"><option value="active">Active</option><option value="paused">Paused</option></select></div>
+              <div class="form-group"><label class="form-label">Notes</label><input type="text" id="fx-notes" placeholder="Any notes..."></div>
+            </div>
+            <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addFixed()">Add Fixed Expense</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel" style="margin-bottom:16px;">
+            <div class="panel-header"><div class="panel-title">Due This Month</div></div>
+            <div class="panel-body" id="fx-due-list"><div class="empty-state"><div class="empty-icon">⊟</div>No fixed expenses yet</div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">By Category</div></div>
+            <div class="panel-body"><div class="donut-wrap" id="fx-donut"><div class="empty-state" style="width:100%;">No data yet</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div id="fx-grouped-list"></div>
+    </div>
+
+    <!-- ══ SAVINGS GOALS ══ -->
+    <div class="section" id="section-goals">
+      <div class="cards-row">
+        <div class="stat-card green"><div class="stat-label">Total Goals</div><div class="stat-value green" id="gl-count">0</div></div>
+        <div class="stat-card blue"><div class="stat-label">Target Amount</div><div class="stat-value blue" id="gl-target">$0</div></div>
+        <div class="stat-card yellow"><div class="stat-label">Amount Saved</div><div class="stat-value yellow" id="gl-saved">$0</div></div>
+        <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value green" id="gl-done">0</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header"><div class="panel-title">New Savings Goal</div></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Goal Name</label><input type="text" id="gl-name" placeholder="Emergency Fund, New Car, Vacation..."></div>
+            <div class="form-group"><label class="form-label">Target Amount ($)</label><input type="number" id="gl-target-amt" placeholder="10000" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Current Saved ($)</label><input type="number" id="gl-saved-amt" placeholder="0" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Target Date</label><input type="date" id="gl-date"></div>
+            <div class="form-group"><label class="form-label">Emoji</label><input type="text" id="gl-emoji" placeholder="🏠 🚗 ✈️ 💍" maxlength="4"></div>
+            <div class="form-group"><label class="form-label">Notes</label><input type="text" id="gl-notes" placeholder="Any notes..."></div>
+          </div>
+          <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addGoal()">Add Goal</button></div>
+        </div>
+      </div>
+      <div id="goals-list"><div class="empty-state" style="padding:40px;"><div class="empty-icon">◎</div>No savings goals yet — add your first goal!</div></div>
+    </div>
+
+    <!-- ══ INVESTMENTS ══ -->
+    <div class="section" id="section-investments">
+      <div class="cards-row">
+        <div class="stat-card blue"><div class="stat-label">Portfolio Value</div><div class="stat-value blue" id="inv-total">$0</div></div>
+        <div class="stat-card green"><div class="stat-label">Total Gain/Loss</div><div class="stat-value" id="inv-gain">$0</div></div>
+        <div class="stat-card blue"><div class="stat-label">Return %</div><div class="stat-value" id="inv-pct">0%</div></div>
+        <div class="stat-card blue"><div class="stat-label">Positions</div><div class="stat-value blue" id="inv-positions">0</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header"><div class="panel-title">Add Investment</div></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Ticker / Name</label><input type="text" id="inv-ticker" placeholder="AAPL, BTC..." style="text-transform:uppercase;"></div>
+            <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="inv-name" placeholder="Apple Inc."></div>
+            <div class="form-group"><label class="form-label">Shares / Units</label><input type="number" id="inv-shares" placeholder="10" min="0" step="0.0001"></div>
+            <div class="form-group"><label class="form-label">Buy Price ($)</label><input type="number" id="inv-buy" placeholder="150.00" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Current Price ($)</label><input type="number" id="inv-current" placeholder="175.00" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Asset Type</label><select id="inv-type"><option>Stock</option><option>ETF</option><option>Crypto</option><option>Bond</option><option>Real Estate</option><option>Other</option></select></div>
+            <div class="form-group"><label class="form-label">Purchase Date</label><input type="date" id="inv-date"></div>
+            <div class="form-group"><label class="form-label">Account</label><input type="text" id="inv-account" placeholder="Robinhood, Fidelity, Coinbase..."></div>
+          </div>
+          <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addInvestment()">Add Position</button></div>
+        </div>
+      </div>
+      <div class="inv-grid" id="inv-grid"><div class="panel" style="grid-column:1/-1;"><div class="empty-state" style="padding:40px;"><div class="empty-icon">◈</div>No investments yet — add your first position</div></div></div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Portfolio Allocation</div></div>
+        <div class="panel-body"><div class="donut-wrap" id="inv-donut"><div class="empty-state" style="width:100%;">No data yet</div></div></div>
+      </div>
+    </div>
+
+    <!-- ══ TRAVEL ══ -->
+    <div class="section" id="section-travel">
+      <div class="cards-row">
+        <div class="stat-card blue"><div class="stat-label">Total Trips</div><div class="stat-value blue" id="tr-total">0</div></div>
+        <div class="stat-card yellow"><div class="stat-label">Upcoming</div><div class="stat-value yellow" id="tr-upcoming">0</div></div>
+        <div class="stat-card green"><div class="stat-label">Completed</div><div class="stat-value green" id="tr-completed">0</div></div>
+        <div class="stat-card blue"><div class="stat-label">Planned</div><div class="stat-value blue" id="tr-planned">0</div></div>
+      </div>
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header"><div class="panel-title">Plan a Trip</div></div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Destination</label><input type="text" id="tr-dest" placeholder="Paris, Tokyo, Bali..."></div>
+            <div class="form-group"><label class="form-label">Country / Region</label><input type="text" id="tr-country" placeholder="France, Japan..."></div>
+            <div class="form-group"><label class="form-label">Start Date</label><input type="date" id="tr-start"></div>
+            <div class="form-group"><label class="form-label">End Date</label><input type="date" id="tr-end"></div>
+            <div class="form-group"><label class="form-label">Status</label><select id="tr-status"><option value="planned">Planned (Dream)</option><option value="upcoming">Upcoming (Booked)</option><option value="completed">Completed</option></select></div>
+            <div class="form-group"><label class="form-label">Budget ($)</label><input type="number" id="tr-budget" placeholder="0.00" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Emoji</label><input type="text" id="tr-emoji" placeholder="🗼 🏖️ 🏔️" maxlength="4" style="font-size:1.2rem;"></div>
+            <div class="form-group"><label class="form-label">Accommodation</label><input type="text" id="tr-hotel" placeholder="Hotel, Airbnb..."></div>
+            <div class="form-group full"><label class="form-label">Notes</label><input type="text" id="tr-notes" placeholder="Things to do, packing notes..."></div>
+          </div>
+          <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addTrip()">Add Trip</button></div>
+        </div>
+      </div>
+      <div class="trip-grid" id="trip-grid"><div class="panel" style="grid-column:1/-1;"><div class="empty-state" style="padding:40px;"><div class="empty-icon">✈</div>No trips yet — start planning!</div></div></div>
+    </div>
+
+    <!-- ══ CALENDAR ══ -->
+    <div class="section" id="section-calendar">
+      <div class="panel" style="margin-bottom:20px;">
+        <div class="panel-header">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calPrev()">‹</button>
+            <div class="cal-month-title" id="cal-month-title"></div>
+            <button class="cal-nav-btn" onclick="calNext()">›</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="cal-grid" id="cal-header">
+            <div class="cal-header-day">Sun</div><div class="cal-header-day">Mon</div><div class="cal-header-day">Tue</div><div class="cal-header-day">Wed</div><div class="cal-header-day">Thu</div><div class="cal-header-day">Fri</div><div class="cal-header-day">Sat</div>
+          </div>
+          <div class="cal-grid" id="cal-grid" style="margin-top:4px;"></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Add Event</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label class="form-label">Title</label><input type="text" id="ev-title" placeholder="Anniversary, Doctor, Date Night..."></div>
+              <div class="form-group"><label class="form-label">Date</label><input type="date" id="ev-date"></div>
+              <div class="form-group"><label class="form-label">Time</label><input type="time" id="ev-time"></div>
+              <div class="form-group"><label class="form-label">Category</label><select id="ev-cat"><option value="personal">💛 Personal</option><option value="travel">✈️ Travel</option><option value="health">❤️ Health</option><option value="finance">💚 Finance</option><option value="social">💙 Social</option><option value="anniversary">🩷 Anniversary</option><option value="work">🤍 Work</option></select></div>
+              <div class="form-group full"><label class="form-label">Notes</label><input type="text" id="ev-notes" placeholder="Details..."></div>
+            </div>
+            <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addEvent()">Add Event</button></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Upcoming Events</div></div>
+          <div class="panel-body" id="upcoming-events"><div class="empty-state">No events yet</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PHOTOS ══ -->
+    <div class="section" id="section-photos">
+      <div class="two-col" style="margin-bottom:0;">
+        <div>
+          <div class="upload-zone" onclick="document.getElementById('photo-upload').click()">
+            <input type="file" id="photo-upload" accept="image/*" multiple style="display:none;" onchange="handlePhotoUpload(event)">
+            <div class="upload-icon">❋</div>
+            <div class="upload-text"><strong>Click to add photos</strong><br>or drag & drop your memories</div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">New Album</div></div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div class="form-group"><label class="form-label">Album Name</label><input type="text" id="alb-name" placeholder="Paris 2025, Our Wedding..."></div>
+                <div class="form-group"><label class="form-label">Date</label><input type="date" id="alb-date"></div>
+              </div>
+              <div class="form-actions" style="margin-top:12px;"><button class="btn btn-primary" onclick="addAlbum()">Create Album</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Albums</div></div>
+          <div class="panel-body" id="album-list"><div class="empty-state"><div class="empty-icon">❋</div>No albums yet</div></div>
+        </div>
+      </div>
+      <div class="album-tabs" id="album-tabs" style="margin-top:20px;"><button class="album-tab active" onclick="filterAlbum('all',this)">All Photos</button></div>
+      <div class="photo-grid" id="photo-grid"><div style="grid-column:1/-1;"><div class="empty-state" style="padding:50px;"><div class="empty-icon">🌸</div>Your memories will live here — add your first photo!</div></div></div>
+    </div>
+
+  </div><!-- end .content -->
+</main>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal-overlay" onclick="closeEditModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="edit-modal-title">Edit</div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body" id="edit-modal-body"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
 </html>
