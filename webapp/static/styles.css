@@ -1,8 +1,8 @@
   :root {
-    --bg: #edeae0;
-    --surface: #f5f2ea;
-    --surface2: #ece8dc;
-    --surface3: #e0dcd0;
+    --bg: #f5e6b8;
+    --surface: #f9efd0;
+    --surface2: #f0e2b8;
+    --surface3: #e8d8a8;
     --border: #d0cbbf;
     --border2: #bfb9ac;
     --accent: #2a4a7a;
@@ -26,7 +26,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-weight: 300;
     min-height: 100vh;
     overflow-x: hidden;
@@ -43,7 +43,7 @@
 
   .front-page {
     position: fixed; inset: 0;
-    background: #f5f0e0;
+    background: #f5e6b8;
     z-index: 600;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     cursor: pointer;
@@ -73,7 +73,7 @@
   .fp-corner.br { bottom: 28px; right: 28px; border-width: 0 1px 1px 0; }
 
   .fp-names {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: clamp(3rem, 10vw, 7.5rem);
     font-weight: 200;
     color: #2a4a7a;
@@ -95,7 +95,7 @@
   .fp-diamond { font-size: 0.55rem; color: rgba(196,67,42,0.5); letter-spacing: 8px; }
 
   .fp-sub {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: clamp(0.55rem, 1.2vw, 0.72rem);
     letter-spacing: 6px;
     text-transform: uppercase;
@@ -105,7 +105,7 @@
   }
 
   .fp-cta {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.52rem;
     letter-spacing: 5px;
     text-transform: uppercase;
@@ -117,7 +117,7 @@
   }
 
   .fp-year {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.6rem;
     font-weight: 200;
     letter-spacing: 10px;
@@ -127,9 +127,19 @@
     text-transform: uppercase;
   }
 
-  @keyframes breathe {
-    0%, 100% { opacity: 0.28; }
-    50% { opacity: 0.7; }
+  .fp-logo {
+    width: min(200px, 35vw);
+    height: auto;
+    position: relative; z-index: 1;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 16px rgba(42,74,122,0.08));
+    animation: logoFloat 4s ease-in-out infinite;
+  }
+
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
 
   /* ── PIN SCREEN ──────────────────────────────── */
@@ -194,7 +204,7 @@
   }
 
   .pin-user-name {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.7rem;
     letter-spacing: 4px;
     text-transform: uppercase;
@@ -214,7 +224,7 @@
   }
 
   .pin-label {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.6rem;
     letter-spacing: 6px;
     text-transform: uppercase;
@@ -268,7 +278,7 @@
     border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.05);
     color: rgba(255,255,255,0.9);
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 1.1rem;
     font-weight: 300;
     letter-spacing: 1px;
@@ -289,7 +299,7 @@
   .pin-key.delete:hover { color: var(--rose); }
 
   .pin-error-msg {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.58rem;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -301,7 +311,7 @@
   .pin-error-msg.show { opacity: 1; }
 
   .pin-back {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.52rem;
     letter-spacing: 4px;
     text-transform: uppercase;
@@ -314,7 +324,7 @@
   .pin-back:hover { color: rgba(255,255,255,0.6); }
 
   .pin-screen-title {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.55rem;
     letter-spacing: 8px;
     text-transform: uppercase;
@@ -344,26 +354,22 @@
 
   .hub-header {
     width: 100%;
-    background: var(--topbar);
+    background: #7a8fa8;
     display: flex; flex-direction: column; align-items: center;
     padding: 40px 24px 36px;
     position: relative;
   }
-  .hub-header::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent 0%, #c4432a 20%, #c4432a 80%, transparent 100%);
-  }
+  .hub-header::after { display: none; }
 
   .hub-names {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Caveat', cursive;
     font-size: clamp(2rem, 5vw, 3.2rem);
     font-weight: 400; font-style: italic;
     color: #f5f0e0;
     line-height: 1; letter-spacing: 2px;
   }
   .hub-sub {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.58rem; letter-spacing: 7px;
     text-transform: uppercase; font-weight: 300;
     color: rgba(245,240,224,0.4);
@@ -371,7 +377,7 @@
   }
 
   .hub-section-lbl {
-    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Caveat', cursive;
     font-size: 0.58rem; letter-spacing: 6px; text-transform: uppercase;
     color: var(--muted);
     margin: 48px 0 24px;
@@ -410,37 +416,57 @@
   }
   .hub-card-banner {
     flex: 1; position: relative; overflow: hidden;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 16px;
-    padding: 12% 16px 10%;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    gap: 14px;
+    padding: 0 16px 20px;
   }
   .hub-card-icon {
-    width: 85%; max-width: 320px;
-    aspect-ratio: 1;
+    position: absolute;
+    top: 5%; left: -5%; right: -5%; bottom: 36px;
     display: flex; align-items: center; justify-content: center;
   }
   .hub-card-icon svg {
     width: 100%; height: 100%;
   }
   .hub-card-icon img {
-    width: 100%; height: 100%; object-fit: contain; mix-blend-mode: lighten;
+    width: 100%; height: 100%; object-fit: contain; object-position: center center; mix-blend-mode: lighten;
   }
   .hub-card-lbl {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Caveat', cursive;
     font-size: clamp(0.9rem, 1.4vw, 1.3rem);
     font-weight: 400;
     font-style: italic;
     letter-spacing: 2px;
-    color: rgba(245,240,224,0.92);
+    color: rgba(245,240,224,0.95);
     position: relative; z-index: 2;
     line-height: 1;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
   }
   .hub-card-body { display: none; }
 
   @media (max-width: 900px) { .hub-grid { grid-template-columns: repeat(2,1fr); padding: 0 32px; } }
   @media (max-width: 580px) { .hub-grid { grid-template-columns: repeat(2,1fr); padding: 0 20px; gap: 14px; } }
 
-  /* ── SIDEBAR ─────────────────────────────────── */
+  .sidebar-home-btn {
+    margin-top: 12px;
+    padding: 9px 14px;
+    font-family: 'Caveat', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.18s;
+  }
+  .sidebar-home-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(42,74,122,0.06);
+  }
+
   .sidebar {
     position: fixed; left: 0; top: 0; bottom: 0;
     width: 230px;
@@ -457,7 +483,7 @@
     cursor: pointer;
   }
   .sidebar-logo-name {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Caveat', cursive;
     font-size: 1.4rem; font-weight: 400; font-style: italic;
     color: var(--accent); letter-spacing: 1px;
   }
@@ -501,7 +527,7 @@
     border-radius: 10px; padding: 12px 14px;
   }
   .nw-chip-label { font-size: 0.56rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2.5px; }
-  .nw-chip-value { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--accent); margin-top: 2px; }
+  .nw-chip-value { font-family: 'Caveat', cursive; font-size: 1.5rem; color: var(--accent); margin-top: 2px; }
   .nw-chip-sub { font-size: 0.6rem; color: var(--muted); margin-top: 3px; }
 
   /* ── MAIN ─────────────────────────────────────── */
@@ -517,7 +543,7 @@
   .topbar-left { display: flex; align-items: center; gap: 14px; }
   .topbar-dividers { color: rgba(196,67,42,0.4); font-size: 0.8rem; letter-spacing: 5px; }
   .page-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Caveat', cursive;
     font-size: 1.4rem; letter-spacing: 3px;
     text-transform: none; color: #f5f0e0;
     font-style: italic; font-weight: 400;
@@ -527,7 +553,7 @@
   /* ── BUTTONS ─────────────────────────────────── */
   .btn {
     padding: 8px 16px; border-radius: 6px; border: none;
-    cursor: pointer; font-family: 'Josefin Sans', sans-serif;
+    cursor: pointer; font-family: 'Caveat', cursive;
     font-size: 0.65rem; letter-spacing: 1.5px;
     text-transform: uppercase; font-weight: 400;
     transition: all 0.18s;
@@ -608,7 +634,7 @@
   input, select, textarea {
     background: var(--surface2); border: 1px solid var(--border);
     border-radius: 8px; padding: 9px 13px;
-    color: var(--text); font-family: 'Josefin Sans', sans-serif; font-size: 0.75rem;
+    color: var(--text); font-family: 'Caveat', cursive; font-size: 0.75rem;
     font-weight: 300; outline: none; transition: border-color 0.18s; width: 100%;
   }
   input:focus, select:focus, textarea:focus {
@@ -770,6 +796,7 @@
   /* Toast notification */
   .toast { position: fixed; bottom: 28px; right: 28px; background: var(--topbar); color: #f5f0e0; border: 1px solid rgba(196,67,42,0.4); border-radius: 10px; padding: 12px 20px; font-size: 0.72rem; letter-spacing: 1px; z-index: 9000; transform: translateY(20px); opacity: 0; transition: all 0.3s; pointer-events: none; }
   .toast.show { transform: translateY(0); opacity: 1; }
+
   /* ── INSIGHT BLOCK (AI finance section) ────────── */
   .insight-block {
     min-height: 140px;
