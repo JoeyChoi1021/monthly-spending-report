@@ -531,6 +531,7 @@
   .btn-danger { background: rgba(139,32,53,0.15); color: var(--red); border: 1px solid rgba(139,32,53,0.25); }
   .btn-danger:hover { background: rgba(139,32,53,0.25); }
   .btn-sm { padding: 5px 11px; font-size: 0.58rem; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
   /* ── CONTENT ─────────────────────────────────── */
   .content { padding: 32px 36px; }

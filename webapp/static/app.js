@@ -6,6 +6,61 @@ let state = {
 };
 
 let currentLoggedInUser = null;
+const INSIGHT_COOLDOWN_MS = 20000;
+let insightState = {
+  enabled: false,
+  lastActivatedAt: 0,
+  cooldownTimer: null,
+};
+
+function insightCooldownRemainingMs() {
+  const elapsed = Date.now() - insightState.lastActivatedAt;
+  return Math.max(0, INSIGHT_COOLDOWN_MS - elapsed);
+}
+
+function resetFinanceInsightPanels() {
+  const aiEl = document.getElementById('ai-summary-block');
+  const nextEl = document.getElementById('next-month-block');
+  if (aiEl) aiEl.textContent = 'Add at least one month of transactions to generate an AI-style summary.';
+  if (nextEl) nextEl.textContent = 'Add spending data to estimate next month.';
+}
+
+function refreshInsightsButtonState() {
+  const btn = document.getElementById('activate-insights-btn');
+  if (!btn) return;
+  const remaining = insightCooldownRemainingMs();
+  if (remaining > 0) {
+    btn.disabled = true;
+    btn.textContent = `Activate in ${Math.ceil(remaining / 1000)}s`;
+    return;
+  }
+  btn.disabled = false;
+  btn.textContent = insightState.enabled ? 'Refresh Insights' : 'Activate Insights';
+  if (insightState.cooldownTimer) {
+    clearInterval(insightState.cooldownTimer);
+    insightState.cooldownTimer = null;
+  }
+}
+
+function startInsightCooldown() {
+  refreshInsightsButtonState();
+  if (insightState.cooldownTimer) clearInterval(insightState.cooldownTimer);
+  insightState.cooldownTimer = setInterval(refreshInsightsButtonState, 1000);
+}
+
+function activateFinanceInsights() {
+  const remaining = insightCooldownRemainingMs();
+  if (remaining > 0) {
+    toast(`Insights available in ${Math.ceil(remaining / 1000)}s`);
+    refreshInsightsButtonState();
+    return;
+  }
+  insightState.enabled = true;
+  insightState.lastActivatedAt = Date.now();
+  renderOverview();
+  startInsightCooldown();
+  toast('Insights activated ✓');
+}
 
 function loadUserState(username) {
   try {
@@ -20,6 +75,14 @@ function loadUserState(username) {
   } catch(e) {}
   ['fixedExpenses','trips','events','photos','albums','goals'].forEach(k => { if (!state[k]) state[k] = []; });
   if (!state.budgets) state.budgets = {};
+  insightState.enabled = false;
+  insightState.lastActivatedAt = 0;
+  if (insightState.cooldownTimer) {
+    clearInterval(insightState.cooldownTimer);
+    insightState.cooldownTimer = null;
+  }
+  resetFinanceInsightPanels();
+  refreshInsightsButtonState();
   renderAll();
 }
 
@@ -664,7 +727,11 @@ function renderOverview() {
 
   renderBarChart();
   renderDonutChart('donut-wrap', state.expenses.filter(i => getMonth(i.date) === tm), 'cat');
-  renderFinanceInsights(monthIncome, monthSpend, monthFixed, savings);
+  if (insightState.enabled) {
+    renderFinanceInsights(monthIncome, monthSpend, monthFixed, savings);
+  } else {
+    resetFinanceInsightPanels();
+  }
   renderRecentTable();
 }
 
@@ -1266,6 +1333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('ev-date').value = today;
   document.getElementById('alb-date').value = today;
   updateSubcats('fx');
+  refreshInsightsButtonState();
   // Drag and drop photos
   const uploadZone = document.querySelector('.upload-zone');
   if (uploadZone) {
